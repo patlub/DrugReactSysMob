@@ -90,9 +90,9 @@
 
 
     </div>
-    <a href="#checkDrugPopup" data-rel="popup" data-transition="slideup"><div data-role="content" class="divLink" style="background-color: darkkhaki;">Check Drug</div></a>
-    <a href="#drugRequests"><div data-role="content" style="background-color: chocolate" data-transition="slide">Drug Requests</div></a>
-    <a href="#drugReports"><div data-role="content" style="background-color: darkgoldenrod" data-transition="slide">Drug Reports</div></a>
+    <a href="#checkDrugPopup" data-rel="popup" data-transition="slideup"><div data-role="content" style="background-color: darkkhaki;">Check Drug</div></a>
+    <a href="#drugRequests" data-transition="slide"><div data-role="content" style="background-color: chocolate;" data-transition="slide">Drug Requests</div></a>
+    <a href="#drugReports" data-transition="slide"><div data-role="content" style="background-color: darkgoldenrod;" data-transition="slide">Drug Reports</div></a>
     <style>
         a:link{
             color: black;
@@ -108,7 +108,8 @@
                 <h2>Select Drug</h2>
             </div>
             <div data-role="content">
-            <select>
+             <label for="selectDrug">Select Drug</label>
+            <select id="selectDrug" name="selectDrug">
                 <option>fhgfhgf</option>
                 <option>bbnmbnb</option>
                 <option>jjbhbjhbjh</option>
@@ -122,16 +123,40 @@
 
     </div>
 </div>
+
 <div data-role="page" id="drugRequests" data-theme="b">
     <div data-role="header">
         <h3>Drug Requests</h3>
     </div>
+    <div data-role="navbar">
+        <ul>
+            <li><a href="#requestDrugPopup" data-rel="popup" data-transition="slideup" data-icon="grid">Request Drug</a></li>
+        </ul>
+    </div>
+
     <div data-role="content">
 
     </div>
     <div data-role="footer">
 
     </div>
+    <div data-role="popup" id="requestDrugPopup" class="" data-position-to="window">
+        <form>
+            <div data-role="header">
+                <h2>Request Drug</h2>
+            </div>
+            <div data-role="content">
+                <input type="text" id="enterSickness" name="enterSickness" placeholder="Enter Sickness"/>
+                <textarea id="enterSigns" name="enterSigns" placeholder="Signs"></textarea>
+                <textarea id="enterSymptoms" name="enterSymptoms" placeholder="Symptoms"></textarea>
+                <input type="text" id="medicationPeriod" name="medicationPeriod" placeholder="Period Of Medication"/>
+                <input type="button" value="Send Request" id="requestDrugButton"/>
+
+            </div>
+        </form>
+
+    </div>
+
 
 
 </div>
@@ -140,6 +165,11 @@
     <div data-role="header">
         <h3>Drug Reports</h3>
     </div>
+    <div data-role="navbar">
+        <ul>
+            <li><a href="#reportDrugPopup" data-transition="slide" data-icon="grid">Report Drug</a></li>
+        </ul>
+    </div>
     <div data-role="content">
 
     </div>
@@ -150,6 +180,7 @@
 
 
 </div>
+
 
 </body>
 </html>
