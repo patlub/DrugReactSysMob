@@ -10,12 +10,12 @@
 <body>
 
 <div data-role="page" id="homePage" data-theme="b">
-    <div data-role="header"><h3>Drug Reaction System</h3></div>
+    <div data-role="header"><h3>Home</h3></div>
     <div data-role="navbar">
         <ul>
             <li><a href="#homePage" data-transition="slide" data-icon="grid">Home</a></li>
-            <li><a href="#drugRequests" data-transition="slide" data-icon="grid">Drug Requests</a></li>
-            <li><a href="#drugReports" data-transition="slide" data-icon="grid">Drug Reports</a></li>
+            <li><a href="#drugRequests" data-transition="slide" data-icon="grid">Drug Reports</a></li>
+            <li><a href="#drugReports" data-transition="slide" data-icon="grid">Drug Requests</a></li>
         </ul>
     </div>
     <div data-role="content">
@@ -38,7 +38,7 @@
                     <option>bbmnbmnb</option>
                     <option>jhhjhhj</option>
                 </select>
-                <input type="button" value="check" id="checkDrugButton"/>
+                <input type="submit" value="check" id="checkDrugButton" data-inline="true"/>
 
             </div>
         </form>
@@ -76,8 +76,8 @@
     <div data-role="navbar">
         <ul>
             <li><a href="#homePage" data-transition="slide" data-icon="grid">Home</a></li>
-            <li><a href="#drugRequests" data-transition="slide" data-icon="grid">Drug Requests</a></li>
-            <li><a href="#drugReports" data-transition="slide" data-icon="grid">Drug Reports</a></li>
+            <li><a href="#drugRequests" data-transition="slide" data-icon="grid">Drug Reports</a></li>
+            <li><a href="#drugReports" data-transition="slide" data-icon="grid">Drug Requests</a></li>
         </ul>
     </div>
         <div data-role="content">
@@ -131,14 +131,14 @@
     <div data-role="popup" id="requestDrugPopup" class="" data-position-to="window">
         <form>
             <div data-role="header">
-                <h2>Request Drug</h2>
+                <h2>Drug Requests</h2>
             </div>
             <div data-role="content">
                 <input type="text" id="enterSickness" name="enterSickness" placeholder="Enter Sickness"/>
                 <textarea id="requestEnterSigns" name="requestEnterSigns" placeholder="Signs"></textarea>
                 <textarea id="requestEnterSymptoms" name="requestEnterSymptoms" placeholder="Symptoms"></textarea>
                 <input type="text" id="requestMedicationPeriod" name="requestMedicationPeriod" placeholder="Period Of Medication"/>
-                <input type="button" value="Send Request" id="requestDrugButton"/>
+                <input type="submit" value="Send Request" id="requestDrugButton" data-inline="true"/>
 
             </div>
         </form>
@@ -171,7 +171,7 @@
 <div data-role="page" id="reportDrugPage" data-theme="b">
     <form>
         <div data-role="header">
-            <h2>Request Drug</h2>
+            <h2>Report Drug</h2>
         </div>
         <div data-role="content">
             <input type="text" id="enterDrugName" name="enterDrugName" placeholder="Enter Drug Name"/>
