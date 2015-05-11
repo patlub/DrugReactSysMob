@@ -8,42 +8,79 @@
     <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 </head>
 <body>
-<div data-role="popup" id="loginPopup" data-theme="b">
-    <div data-role="header" id="hdrMain">
-        <h1>Drug Reaction</h1>
+
+<div data-role="page" id="homePage" data-theme="b">
+    <div data-role="header"><h3>Drug Reaction System</h3></div>
+    <div data-role="navbar">
+        <ul>
+            <li><a href="#homePage" data-transition="slide" data-icon="grid">Home</a></li>
+            <li><a href="#drugRequests" data-transition="slide" data-icon="grid">Drug Requests</a></li>
+            <li><a href="#drugReports" data-transition="slide" data-icon="grid">Drug Reports</a></li>
+        </ul>
+    </div>
+    <div data-role="content">
+        <a href="#checkDrugPopup" data-rel="popup" data-transition="slideup"><div style="height: 50px;">Check Drug</div></a>
+        <a href="#loginPopup" data-rel="popup" data-transition="slideup"><div style="height: 50px;">Please Login</div></a>
 
     </div>
 
-    <div data-role="content" id="contentmain1" name="contentmain">
-    <form>
-    <div id="usernameDiv" data-role="fieldcontain">
-        <input type="text" id="username" name="username" placeholder="Username"/>
-    </div>
-    <div id="passwordDiv" data-role="fieldcontain">
-        <input type="password" id="password" name="password" placeholder="Password"/>
-    </div>
-    <div id="submitDiv" data-role="fieldcontain">
-        <input type="submit" id="login" name="login" value="Login" data-inline="true"/>
-    </div>
+    <div data-role="popup" id="checkDrugPopup" class="ui-content" data-position-to="window" data-overlay-theme="a">
+        <form>
+            <div data-role="header">
+                <h2>Select Drug</h2>
+            </div>
+            <div data-role="content">
+                <label for="selectDrug">Select Drug</label>
+                <select id="selectDrug" name="selectDrug">
+                    <option>fhgfhgf</option>
+                    <option>bbnmbnb</option>
+                    <option>jjbhbjhbjh</option>
+                    <option>bbmnbmnb</option>
+                    <option>jhhjhhj</option>
+                </select>
+                <input type="button" value="check" id="checkDrugButton"/>
+
+            </div>
         </form>
-        </div>
-    <div data-role="footer">
 
     </div>
+
+    <div data-role="popup" id="loginPopup" data-overlay-theme="a" data-position-to="window" data-theme="b">
+        <div data-role="header" id="hdrMain">
+            <h1>Login</h1>
+
+        </div>
+
+        <div data-role="content">
+            <form>
+                <div id="usernameDiv" data-role="fieldcontain">
+                    <input type="text" id="username" name="username" placeholder="Username"/>
+                </div>
+                <div id="passwordDiv" data-role="fieldcontain">
+                    <input type="password" id="password" name="password" placeholder="Password"/>
+                </div>
+                <div id="submitDiv" data-role="fieldcontain">
+                    <input type="submit" id="login" name="login" value="Login" data-inline="true"/>
+                    <a href="#registerPage" data-transition="flow">Sign up now</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </div>
 
-<div data-role="page" id="page2" data-theme="b">
+<div data-role="page" id="registerPage" data-theme="b">
     <div data-role="header" id="hdrReg">
         <h1>Drug Reaction</h1>
     </div>
-    <div data-role="navbar" id="navbar">
+    <div data-role="navbar">
         <ul>
-            <li><a href="#page1" data-transition="slide" data-icon="grid" style="">Home</a></li>
-            <li><a href="#page2" data-transition="slide" data-icon="grid">Drug Reports</a></li>
-            <li><a href="#page3" data-transition="slide" data-icon="grid">Drug Requests</a></li>
+            <li><a href="#homePage" data-transition="slide" data-icon="grid">Home</a></li>
+            <li><a href="#drugRequests" data-transition="slide" data-icon="grid">Drug Requests</a></li>
+            <li><a href="#drugReports" data-transition="slide" data-icon="grid">Drug Reports</a></li>
         </ul>
-        </div>
-        <div data-role="content" id="contentMain2" name="contentMain">
+    </div>
+        <div data-role="content">
         <form id="form2">
             <div id="firstnameDiv" data-role="fieldcontain">
                 <input type="text" id="firstname" name="firstname" placeholder="First Name"/>
@@ -72,52 +109,6 @@
     </div>
 
 </div>
-<div data-role="page" id="page3" data-theme="b">
-    <div data-role="header"><h3>Drug Reaction System</h3></div>
-    <div data-role="navbar">
-        <ul>
-            <li><a href="#page1" data-transition="slide" data-icon="grid">Login</a></li>
-            <li><a href="#page2" data-transition="slide" data-icon="grid">Register</a></li>
-            <li><a href="#page3" data-transition="slide" data-icon="grid">view</a></li>
-        </ul>
-    </div>
-    <div data-role="content" style="height: 130px">
-
-
-    </div>
-    <a href="#checkDrugPopup" data-rel="popup" data-transition="slideup"><div data-role="content" style="background-color: darkkhaki;">Check Drug</div></a>
-    <a href="#drugRequests" data-transition="slide"><div data-role="content" style="background-color: chocolate;" data-transition="slide">Drug Requests</div></a>
-    <a href="#drugReports" data-transition="slide"><div data-role="content" style="background-color: darkgoldenrod;" data-transition="slide">Drug Reports</div></a>
-    <style>
-        a:link{
-            color: black;
-            text-decoration: none;
-            height: 30px;
-
-        }
-
-    </style>
-    <div data-role="popup" id="checkDrugPopup" class="ui-content" data-position-to="window" data-overlay-theme="a">
-        <form>
-            <div data-role="header">
-                <h2>Select Drug</h2>
-            </div>
-            <div data-role="content">
-             <label for="selectDrug">Select Drug</label>
-            <select id="selectDrug" name="selectDrug">
-                <option>fhgfhgf</option>
-                <option>bbnmbnb</option>
-                <option>jjbhbjhbjh</option>
-                <option>bbmnbmnb</option>
-                <option>jhhjhhj</option>
-            </select>
-            <input type="button" value="check" id="checkDrugButton"/>
-
-            </div>
-        </form>
-
-    </div>
-</div>
 
 <div data-role="page" id="drugRequests" data-theme="b">
     <div data-role="header">
@@ -125,12 +116,14 @@
     </div>
     <div data-role="navbar">
         <ul>
-            <li><a href="#requestDrugPopup" data-rel="popup" data-transition="slideup" data-icon="grid">Request Drug</a></li>
+            <li><a href="#homePage" data-transition="slide" data-icon="grid">Home</a></li>
+            <li><a href="#drugRequests" data-transition="slide" data-icon="grid">Drug Reports</a></li>
+            <li><a href="#drugReports" data-transition="slide" data-icon="grid">Drug Requests</a></li>
         </ul>
     </div>
 
     <div data-role="content">
-
+        <a href="#requestDrugPopup" data-rel="popup" data-transition="slideup" data-icon="grid">Request Drug</a>
     </div>
     <div data-role="footer">
 
@@ -152,8 +145,6 @@
 
     </div>
 
-
-
 </div>
 
 <div data-role="page" id="drugReports" data-theme="b">
@@ -162,16 +153,19 @@
     </div>
     <div data-role="navbar">
         <ul>
-            <li><a href="#reportDrugPage"  data-transition="slide" data-icon="grid">Report Drug</a></li>
+            <li><a href="#homePage" data-transition="slide" data-icon="grid">Home</a></li>
+            <li><a href="#drugRequests" data-transition="slide" data-icon="grid">Drug Reports</a></li>
+            <li><a href="#drugReports" data-transition="slide" data-icon="grid">Drug Requests</a></li>
         </ul>
     </div>
+
     <div data-role="content">
+        <a href="#reportDrugPage"  data-transition="slide" data-icon="grid">Report Drug</a>
 
     </div>
     <div data-role="footer">
 
     </div>
-
 
 </div>
 <div data-role="page" id="reportDrugPage" data-theme="b">
@@ -192,7 +186,5 @@
     </form>
 
 </div>
-
-
 </body>
 </html>
