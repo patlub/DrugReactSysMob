@@ -1,0 +1,6 @@
+input[type="text"].error, input[type="password"].error{
+    background-color: red;
+}
+/*input[type="password"].error{*/
+    /*background-color: red;*/
+/*}*/
