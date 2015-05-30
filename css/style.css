@@ -1,6 +1,3 @@
-input[type="text"].error, input[type="password"].error{
-    background-color: red;
+input[type="text"].missing, input[type="password"].missing {
+    border:1px solid red;
 }
-/*input[type="password"].error{*/
-    /*background-color: red;*/
-/*}*/

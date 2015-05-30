@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <title></title>
-    <link href="css/style.css" rel="stylesheet">
+    <link href="css/style.css" type="text/css" rel="stylesheet">
     <link href="jquery/jquery.mobile-1.4.5.min.css" rel="stylesheet"/>
     <script src="jquery/jquery-latest.min.js" type="text/javascript"></script>
     <script src="jquery/jquery-ui.js" type="text/javascript"></script>
@@ -13,10 +13,13 @@
     <script src="jquery-mobile-slide-menu.js" type="text/javascript"></script>
     <script type="text/javascript">
 
-        var username = null;
+        var loginEmail = null;
+        var email = null;
         var password = null;
+        var passwordReg = null;
         var firstName = null;
         var lastName = null;
+        var confirm = null;
         var loginFormVar = null;
         var loginPopup = null
 
@@ -27,7 +30,7 @@
 
         //constants
         var EMPTY = "";
-        var ERROR = "error";
+        var MISSING = "missing";
     </script>
 
 </head>
@@ -79,7 +82,7 @@
         <div data-role="content">
             <form id="loginForm" action="http://localhost/DrugreactSysWeb/Php/login.php">
                 <div id="usernameDiv" data-role="fieldcontain">
-                    <input type="text" id="username" name="username" placeholder="Username"/>
+                    <input type="text" id="loginEmail" name="loginEmail" placeholder="Email"/>
                 </div>
                 <div id="passwordDiv" data-role="fieldcontain">
                     <input type="password" id="password" name="password" placeholder="Password"/>
@@ -88,23 +91,12 @@
                     <input type="submit" id="login" name="login" value="Login" data-inline="true"/>
                     <a href="#registerPage" data-transition="flow">Sign up now</a>
                 </div>
+
             </form>
         </div>
     </div>
 
     <script type="text/javascript">
-        $(document).ready(function(){
-            username = $('#username');
-            password = $('#password');
-            firstName = $('#firstname');
-            loginFormVar = $('#loginForm');
-            loginPopup = $('#loginPopup');
-
-        });
-
-        $(function(){
-            $('#side-menu').slideMenu();
-        });
 
         $('#loginForm').submit(function(e) {
 
@@ -112,12 +104,12 @@
             e.preventDefault();
 
             var err = false;
-            if (username.val() == null || username.val() == EMPTY) {
-                username.addClass(ERROR);
+            if (loginEmail.val() == null || loginEmail.val() == EMPTY) {
+                loginEmail.addClass(MISSING);
                 err = true;
             }
             if (password.val() == null || password.val() == EMPTY) {
-                password.addClass(ERROR);
+                password.addClass(MISSING);
                 err = true;
             }
             if (err == true) {
@@ -126,10 +118,11 @@
 
             $.post($this.attr('action'), $this.serialize(), function(data){
                 loginPopup.hide();
-            });
-         //    return false;
-        });
+                document.write(data);
 
+            });
+             return false;
+        });
     </script>
 </div>
 
@@ -139,31 +132,71 @@
         <h1>Drug Reaction</h1>
     </div>
         <div data-role="content">
-        <form id="registerForm">
+        <form id="registrationForm" action="http://localhost/DrugreactSysWeb/Php/register.php">
             <div id="firstnameDiv" data-role="fieldcontain">
-                <input type="text" id="firstname" name="firstname" placeholder="First Name"/>
+                <input type="text" id="firstName" name="firstname" placeholder="First Name" />
             </div>
             <div id="lastnameDiv" data-role="fieldcontain">
-                <input type="text" id="lastname" name="lastname" placeholder="Last Name"/>
+                <input type="text" id="lastName" name="lastname" placeholder="Last Name"/>
             </div>
             <div id="emailDiv" data-role="fieldcontain">
                 <input type="text" id="email" name="email" placeholder="Email Address"/>
             </div>
             <div id="passwordregDiv" data-role="fieldcontain">
-                <input type="password" id="passwordreg" name="passwordreg" placeholder="Password"/>
+                <input type="password" id="passwordReg" name="passwordreg" placeholder="Password"/>
             </div>
             <div id="confirmDiv" data-role="fieldcontain">
                 <input type="password" id="confirm" name="confirm" placeholder="Confirm Password"/>
             </div>
             <div id="registerDiv" data-role="fieldcontain">
-                <input type="submit" id="register" name="register" placeholder="Password" value="Register" data-inline="true"/>
+                <input type="submit" id="register" name="register" value="Register" data-inline="true"/>
             </div>
         </form>
+
     </div>
 
     <div data-role="footer">
 
     </div>
+
+    <script type="text/javascript">
+        $('#registrationForm').submit(function(event) {
+            var $this = $(this);
+            event.preventDefault();
+
+            var err = false;
+            if(firstName.val() == null || firstName.val() == EMPTY){
+                firstName.addClass(MISSING);
+                err = true;
+            }
+            if(lastName.val() == null || lastName.val() == EMPTY){
+                lastName.addClass(MISSING);
+                err = true;
+            }
+            if (email.val() == null || email.val() == EMPTY) {
+                email.addClass(MISSING);
+                err = true;
+            }
+            if (passwordReg.val() == null || passwordReg.val() == EMPTY) {
+                passwordReg.addClass(MISSING);
+                err = true;
+            }
+            if(confirm.val() == null || confirm.val() == EMPTY){
+                confirm.addClass(MISSING);
+                err = true;
+            }
+            if (err == true) {
+                return false;
+            }
+            $.post($this.attr('action'), $this.serialize(), function(data){
+                //loginPopup.hide();
+                document.write(data);
+
+            });
+            return false;
+        });
+
+    </script>
 </div>
 
 <div data-role="page" id="drugRequests" data-theme="b">
@@ -229,5 +262,24 @@
     </form>
 
 </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        loginEmail = $('#loginEmail');
+        firstName = $('#firstName');
+        lastName = $('#lastName');
+        email= $('#email');
+        password = $('#password');
+        confirm = $('#confirm');
+        passwordReg = $('#passwordReg');
+        loginFormVar = $('#loginForm');
+        loginPopup = $('#loginPopup');
+
+    });
+
+    $(function(){
+        $('#side-menu').slideMenu();
+    });
+
+</script>
 </body>
 </html>
