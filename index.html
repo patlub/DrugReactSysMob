@@ -22,6 +22,18 @@
         var confirm = null;
         var loginFormVar = null;
         var loginPopup = null
+        var requestDrugForm = null;
+        var requestSickness = null;
+        var requestEnterSigns = null;
+        var requestEnterSymptoms = null;
+        var sicknessPeriod = null;
+
+        var enterDrugName = null;
+        var reportSickness = null;
+        var dosage = null;
+        var reportSigns = null;
+        var reportSymptoms = null;
+        var reportMedicationPeriod = null;
 
         confirmationVar = null;
         hdrConfirmationVar = null;
@@ -212,7 +224,7 @@
 
     </div>
     <div data-role="popup" id="requestDrugPopup" class="" data-position-to="window" data-theme="b">
-        <form>
+        <form id="requestDrugForm" action="http://localhost/DrugreactSysWeb/Php/request.php">
             <div data-role="header">
                 <h2>Drug Requests</h2>
             </div>
@@ -225,6 +237,37 @@
             </div>
         </form>
     </div>
+    <script type="text/javascript">
+        $('#requestDrugForm').submit(function(event){
+            var $this = $(this);
+            event.preventDefault();
+
+            var err = false;
+            if(requestSickness.val() == null || requestSickness.val() == EMPTY){
+                requestSickness.addClass(MISSING);
+                err = true;
+            }
+            if(requestEnterSigns.val() == null || requestEnterSigns.val() == EMPTY){
+                requestEnterSigns.addClass(MISSING);
+                err = true;
+            }
+            if(requestEnterSymptoms.val() == null || requestEnterSymptoms.val() == EMPTY){
+                requestEnterSymptoms.addClass(MISSING);
+            }
+            if(sicknessPeriod.val() == null || sicknessPeriod.val() == EMPTY){
+                sicknessPeriod.addClass(MISSING);
+                err = true;
+            }
+            if(err == true){
+                return false;
+            }
+            $.post($this.attr('action'),$this.serialize(),function(data){
+
+            });
+            return false;
+        });
+
+    </script>
 </div>
 
 <div data-role="page" id="drugReports" data-theme="b">
@@ -244,35 +287,91 @@
 </div>
 
 <div data-role="page" id="reportDrugPage" data-theme="b">
-    <form>
         <div data-role="header">
             <a href="#" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
             <h2>Report Drug</h2>
         </div>
         <div data-role="content">
+            <form id="reportDrugForm">
             <input type="text" id="enterDrugName" name="enterDrugName" placeholder="Enter Drug Name"/>
-            <input type="text" id="reportEntersickness" name="reportEnterSickness" placeholder="Enter Sickness"/>
+            <input type="text" id="reportSickness" name="reportEnterSickness" placeholder="Enter Sickness"/>
             <input type="text" id="dosage" name="dosage" placeholder="Enter Dosage(Days)"/>
-            <textarea id="reportEnterSigns" name="reportEnterSigns" placeholder="(Side Effects)Signs"></textarea>
+            <textarea id="reportSigns" name="reportSigns" placeholder="(Side Effects)Signs"></textarea>
             <textarea id="reportSymptoms" name="reportSymptoms" placeholder="(Side Effects)Symptoms"></textarea>
             <input type="text" id="reportMedicationPeriod" name="reportMedicationPeriod" placeholder="Period Of Medication"/>
-            <input type="button" value="Send Report" id="reportDrugButton" data-inline="true"/>
+            <input type="submit" value="Send Report" id="reportDrugButton" data-inline="true"/>
+            </form>
 
         </div>
-    </form>
 
+    <script type="text/javascript">
+        $('#reportDrugForm').submit(function(event){
+            var $this =$(this);
+            event.preventDefault();
+
+            err = false;
+            if(enterDrugName.val() == null || enterDrugName.val() == EMPTY){
+                enterDrugName.addClass(MISSING);
+                err = true;
+            }
+            if(reportSickness.val() == null || reportSickness.val() == EMPTY){
+                reportSickness.addClass(MISSING);
+                err = true;
+            }
+            if(dosage.val() == null || dosage.val() == EMPTY){
+                dosage.addClass(MISSING);
+                err = true;
+            }
+            if(reportSigns.val() == null || reportSigns.val() == EMPTY){
+                reportSigns.addClass(MISSING);
+                err = true;
+            }
+            if(reportSymptoms.val() == null || reportSymptoms.val() == EMPTY){
+                reportSymptoms.addClass(MISSING);
+                err = true;
+            }
+            if(reportMedicationPeriod.val == null || reportMedicationPeriod.val() == EMPTY){
+                reportMedicationPeriod.addClass(MISSING);
+                err = true;
+            }
+            if(err = true){
+                return false;
+            }
+            $.post($this.attr('action'),$this.serialize(),function(data){
+
+            });
+            return false;
+
+        });
+
+    </script>
 </div>
 <script type="text/javascript">
     $(document).ready(function(){
+        loginFormVar = $('#loginForm');
+        loginPopup = $('#loginPopup');
         loginEmail = $('#loginEmail');
+        password = $('#password');
+
         firstName = $('#firstName');
         lastName = $('#lastName');
         email= $('#email');
-        password = $('#password');
-        confirm = $('#confirm');
         passwordReg = $('#passwordReg');
-        loginFormVar = $('#loginForm');
-        loginPopup = $('#loginPopup');
+        confirm = $('#confirm');
+
+        requestSickness = $('#enterSickness');
+        requestEnterSigns = $('#requestEnterSigns');
+        requestEnterSymptoms = $('#requestEnterSymptoms');
+        sicknessPeriod = $('#sicknessPeriod');
+
+
+        enterDrugName = $('#enterDrugName');
+        reportSickness = $('#reportSickness');
+        dosage = $('#dosage');
+        reportSigns = $('#reportSigns');
+        reportSymptoms = $('#reportSymptoms');
+        reportMedicationPeriod = $('#reportMedicationPeriod');
+
 
     });
 
