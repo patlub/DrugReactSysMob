@@ -12,12 +12,23 @@
     <link href="jquery-mobile-slide-menu.css" rel="stylesheet"/>
     <link href="validate/css/screen.css" rel="stylesheet">
     <script src="jquery-mobile-slide-menu.js" type="text/javascript"></script>
-    <script type="text/javascript" src="validate/dist/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="validate/dist/jquery.validate.js"></script>
+    <script type="application/javascript" src="js/fastclick.js"></script>
     <script type="text/javascript">
 
-        var passwordReg = null;
-        var confirm = null;
-//        //constants
+        $(function() {
+            FastClick.attach(document.body);
+        });
+
+//        var loginEmail = null;
+//        var password = null;
+//
+//        var firstName = null;
+//        var lastName = null;
+//        var email =null;
+//        var passwordReg = null;
+//        var confirm = null;
+        //constants
         var EMPTY = "";
         var MISSING = "missing";
     </script>
@@ -71,33 +82,72 @@
         <div data-role="content">
             <form id="loginForm" action="http://localhost/DrugreactSysWeb/Php/login.php">
                 <div id="usernameDiv" data-role="fieldcontain">
-                    <input type="email" id="loginEmail" name="loginEmail" placeholder="Email" required/>
+                    <input type="text" id="loginEmail" name="loginEmail" placeholder="Email"/>
                 </div>
+                <div class='loginErrorToast' style='display:none'>Please Enter valid email </div>
                 <div id="passwordDiv" data-role="fieldcontain">
-                    <input type="password" id="password" name="password" placeholder="Password" minlength="5"  required/>
+                    <input type="password" id="password" name="password" placeholder="Password" minlength="5"/>
                 </div>
+                <div class='passwordErrorToast' style='display:none'>Please Enter valid password</div>
                 <div id="submitDiv" data-role="fieldcontain">
                     <input type="submit" id="login" name="login" value="Login" data-inline="true"/>
                     <a href="#registerPage" data-transition="flow">Sign up now</a>
                 </div>
 
             </form>
+
         </div>
+
     </div>
 
     <script type="text/javascript">
+
+        $().ready(function(){
+            $("#loginForm").validate({
+                rules:{
+                    loginEmail:{
+                        required: true,
+                        email: true
+                    },
+
+                    password:{
+                        required: true,
+                        minlength: 5
+                    }
+
+                },
+                messages:{
+                    password:{
+                        minlength: "Minimum length must be 5"
+
+                    }
+                }
+            });
+        });
 
         $('#loginForm').submit(function(e) {
 
             var $this = $(this);
             e.preventDefault();
 
+//            var err = false;
+//            if(loginEmail.val() == null || loginEmail.val() == EMPTY){
+//                loginEmail.addClass(MISSING);
+//                $('.loginErrorToast').fadeIn(400).delay(2000).fadeOut(400); //fade out after 2 seconds
+//                return false;
+//            }
+//            if(password.val() == null || password.val() == EMPTY){
+//                password.addClass(MISSING);
+//                $('.passwordErrorToast').fadeIn(400).delay(2000).fadeOut(400); //fade out after 2 seconds
+//                return false;
+//            }
+//
             $.post($this.attr('action'), $this.serialize(), function(data){
-                loginPopup.hide();
+                //loginPopup.hide();
                 document.write(data);
 
             });
-             return false;
+            return false;
         });
     </script>
 </div>
@@ -110,20 +160,27 @@
         <div data-role="content">
         <form id="registrationForm" action="http://localhost/DrugreactSysWeb/Php/register.php">
             <div id="firstnameDiv" data-role="fieldcontain">
-                <input type="text" id="firstName" name="firstname" placeholder="First Name" required />
+                <input type="text" id="firstName" name="firstname" placeholder="First Name"/>
+                <div class='firstNameErrorToast' style='display:none'>Please enter the first name</div>
             </div>
             <div id="lastnameDiv" data-role="fieldcontain">
-                <input type="text" id="lastName" name="lastname" placeholder="Last Name" required />
+                <input type="text" id="lastName" name="lastname" placeholder="Last Name"/>
+                <div class='lastNameErrorToast' style='display:none'>Please enter the last name</div>
             </div>
             <div id="emailDiv" data-role="fieldcontain">
-                <input type="email" id="email" name="email" placeholder="Email Address" required />
+                <input type="text" id="email" name="email" placeholder="Email Address"/>
+                <div class='emailErrorToast' style='display:none'>Please enter the email</div>
             </div>
             <div id="passwordregDiv" data-role="fieldcontain">
-                <input type="password" id="passwordReg" name="passwordreg" placeholder="Password" minlength="5" required />
+                <input type="password" id="passwordReg" name="passwordreg" placeholder="Password"/>
+                <div class='passwordRegErrorToast' style='display:none'>Please enter the password</div>
+                <div class='passLengthErrorToast' style='display:none'>Enter atleast 5 characters</div>
             </div>
-            <div class='errorToast' style='display:none'>Password fields don't match</div>
+
             <div id="confirmDiv" data-role="fieldcontain">
-                <input type="password" id="confirm" name="confirm" placeholder="Confirm Password" minlength="5" equalTo="passwordReg" required />
+                <input type="password" id="confirm" name="confirm" placeholder="Confirm Password"/>
+                <div class='confirmErrorToast' style='display:none'>Please re-type the password</div>
+                <div class='retypeErrorToast' style='display:none'>Password fields don't match</div>
             </div>
 
             <div id="registerDiv" data-role="fieldcontain">
@@ -139,22 +196,52 @@
     </div>
 
     <script type="text/javascript">
+        $().ready(function(){
+            $("#registrationForm").validate({
+                rules:{
+
+                    firstname: "required",
+                    lastname : "required",
+                    email:{
+                        required: true,
+                        email: true
+                    },
+
+                    passwordreg:{
+                        required: true,
+                        minlength: 5
+                    },
+
+                    confirm:{
+                        required: true,
+                        minlength: 5,
+                        equalTo: "#passwordReg"
+                    }
+                },
+                messages:{
+                    passwordreg:{
+                        minlength: "Minimum length must be 5"
+
+                    },
+
+                    confirm:{
+                        minlength: "Minimum length must be 5",
+                         equalTo: "Passwords don't match"
+                    }
+                }
+            });
+        });
+
         $('#registrationForm').submit(function(event) {
             var $this = $(this);
             event.preventDefault();
 
-            var err = false;
-            if(confirm.val() != passwordReg.val()){
-                passwordReg.addClass(MISSING);
-                confirm.addClass(MISSING);
-                $('.errorToast').fadeIn(400).delay(2000).fadeOut(400); //fade out after 3 seconds
-                err = true;
-            }
-
-            if(err == true){
-                return false;
-            }
-
+//            var err = false;
+//            if(firstName.val() == null || firstName.val() == EMPTY){
+//                firstName.addClass(MISSING);
+//                $('.firstNameErrorToast').fadeIn(400).delay(2000).fadeOut(400);
+//                return false;
+//            }
             $.post($this.attr('action'), $this.serialize(), function(data){
                 //loginPopup.hide();
                 document.write(data);
@@ -255,12 +342,19 @@
 </div>
 <script type="text/javascript">
 
-        passwordReg = $('#passwordReg');
-        confirm = $('#confirm');
+//    var loginEmail = $('#loginEmail');
+//    var password = $('#password');
+//
+//    var firstName = $('#firstName');
+//    var lastName = $('#lastName');
+//    var email = $('#email');
+//    passwordReg = $('#passwordReg');
+//    confirm = $('#confirm');
 
-    $(function(){
-        $('#side-menu').slideMenu();
-    });
+
+        $(function(){
+            $('#side-menu').slideMenu();
+        });
 
 </script>
 </body>
