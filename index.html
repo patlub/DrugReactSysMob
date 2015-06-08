@@ -234,14 +234,26 @@
             </div>
             <div data-role="content">
                 <input type="text" id="enterSickness" name="enterSickness" placeholder="Enter Sickness" required/>
-                <textarea id="requestEnterSigns" name="requestEnterSigns" placeholder="Signs"></textarea>
-                <textarea id="requestEnterSymptoms" name="requestEnterSymptoms" placeholder="Symptoms"></textarea>
+                <textarea id="requestEnterSigns" name="requestEnterSigns" placeholder="Signs(None if not any)"></textarea>
+                <textarea id="requestEnterSymptoms" name="requestEnterSymptoms" placeholder="Symptoms(None if not any)"></textarea>
                 <input type="text" id="sicknessPeriod" name="sicknessPeriod" placeholder="Period Of Sickness" required/>
                 <input type="submit" value="Send Request" id="requestDrugButton" data-inline="true"/>
             </div>
         </form>
+        <script type="text/javascript">
+
+
+        </script>
     </div>
     <script type="text/javascript">
+        $().ready(function(){
+            $("#requestDrugForm").validate({
+                rules:{
+                    enterSickness: "required",
+                    sicknessPeriod : "required"
+                }
+            });
+        });
         $('#requestDrugForm').submit(function(event){
             var $this = $(this);
             event.preventDefault();
@@ -277,19 +289,33 @@
             <h2>Report Drug</h2>
         </div>
         <div data-role="content">
-            <form id="reportDrugForm">
+            <form id="reportDrugForm" action="http://localhost/DrugreactSysWeb/Php/report.php">
             <input type="text" id="enterDrugName" name="enterDrugName" placeholder="Enter Drug Name" required/>
             <input type="text" id="reportSickness" name="reportEnterSickness" placeholder="Enter Sickness"required/>
             <input type="text" id="dosage" name="dosage" placeholder="Enter Dosage(Days)" required/>
             <textarea id="reportSigns" name="reportSigns" placeholder="(Side Effects)Signs, Enter none if noy any"></textarea>
             <textarea id="reportSymptoms" name="reportSymptoms" placeholder="(Side Effects)Symptoms, Enter none if noy any"></textarea>
-            <input type="text" id="reportMedicationPeriod" name="reportMedicationPeriod" placeholder="Period Of Medication" required/>
+            <input type="text" id="reportMedicationPeriod" name="reportMedicationPeriod" placeholder="Period Of Medication(days)" required/>
             <input type="submit" value="Send Report" id="reportDrugButton" data-inline="true"/>
             </form>
 
         </div>
 
     <script type="text/javascript">
+        $().ready(function(){
+            $("#reportDrugForm").validate({
+                rules:{
+                    enterDrugName: "required",
+                    reportEnterSickness : "required",
+                    dosage : "required",
+
+                    reportMedicationPeriod: {
+                        required: true,
+                        number: true
+                    }
+                }
+            });
+        });
         $('#reportDrugForm').submit(function(event){
             var $this =$(this);
             event.preventDefault();
