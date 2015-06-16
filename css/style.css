@@ -22,3 +22,15 @@
     -moz-box-shadow: 0px 0px 24px -1px rgba(56, 56, 56, 1);
     box-shadow: 0px 0px 24px -1px rgba(56, 56, 56, 1);
 }
+.panel{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    /*background-color: #000000;*/
+    margin: 5px;
+    padding-left: 30px;
+    border-bottom: groove 1px;
+}
+.panel a:link, a:visited, a:hover, a:active{
+    color: #FFFFFF;
+    text-decoration: none !important;
+}

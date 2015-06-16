@@ -9,9 +9,9 @@
     <script src="jquery/jquery-ui.js" type="text/javascript"></script>
     <script src="jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
     <script src="jquery/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
-    <link href="jquery-mobile-slide-menu.css" rel="stylesheet"/>
+    <!--<link href="jquery-mobile-slide-menu.css" rel="stylesheet"/>-->
     <link href="validate/css/screen.css" rel="stylesheet">
-    <script src="jquery-mobile-slide-menu.js" type="text/javascript"></script>
+    <!--<script src="jquery-mobile-slide-menu.js" type="text/javascript"></script>-->
     <script type="text/javascript" src="validate/dist/jquery.validate.js"></script>
     <script type="application/javascript" src="js/fastclick.js"></script>
     <script type="text/javascript" src="jQuery-Picture/js/jquery-picture-min.js"></script>
@@ -39,20 +39,30 @@
 </head>
 <body>
 
-<div id="side-menu">
-    <ul>
-        <li><a href="" style="color: firebrick; font-weight: bolder;">Menu</a><span class="icon"></span></li>
-        <li><a href="#homePage" data-transition="slide" data-icon="grid">Home</a><span class="icon"></span></li>
-        <li><a href="#drugRequests" data-transition="slide" data-icon="grid">Drug Requests</a></li>
-        <li><a href="#drugReports" data-transition="slide" data-icon="grid">Drug Reports</a></li>
-        <li><a href="#loginPopup" data-rel="popup" data-transition="slideup">Sign In</a></li>
-        <li><a href="#">Sign Out</a></li>
-    </ul>
-</div>
+<!--<div id="side-menu">-->
+    <!--<ul>-->
+        <!--<li><a href="" style="color: firebrick; font-weight: bolder;">Menu</a><span class="icon"></span></li>-->
+        <!--<li><a href="#homePage" data-transition="slide" data-icon="grid">Home</a><span class="icon"></span></li>-->
+        <!--<li><a href="#drugRequests" data-transition="slide" data-icon="grid">Drug Requests</a></li>-->
+        <!--<li><a href="#drugReports" data-transition="slide" data-icon="grid">Drug Reports</a></li>-->
+        <!--<li><a href="#loginPopup" data-rel="popup" data-transition="slideup">Sign In</a></li>-->
+        <!--<li><a href="#">Sign Out</a></li>-->
+    <!--</ul>-->
+<!--</div>-->
 
 <div data-role="page" id="homePage" data-theme="b">
+    <div data-role="panel" data-position="left" data-display="reveal" id="homePanel">
+
+        <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
+        <div class="panel"><a href="#homePage" data-transition="slide" data-icon="grid">Home</a><span class="icon"></span></div>
+        <div class="panel"><a href="#drugRequests" data-transition="slide" data-icon="grid">Drug Requests</a></div>
+        <div class="panel"><a href="#drugReports" data-transition="slide" data-icon="grid">Drug Reports</a></div>
+        <div class="panel"><a href="#loginPopup" data-rel="popup" data-transition="slideup">Sign In</a></div>
+        <div class="panel"><a href="#">Sign Out</a></div>
+
+    </div>
     <div data-role="header">
-        <a href="#" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
+        <a href="#homePanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
         <h3>Home</h3>
     </div>
 
@@ -156,8 +166,18 @@
 </div>
 
 <div data-role="page" id="registerPage" data-theme="b">
+    <div data-role="panel" data-position="left" data-display="reveal" id="registerPanel">
+
+        <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
+        <div class="panel"><a href="#homePage" data-transition="slide" data-icon="grid">Home</a><span class="icon"></span></div>
+        <div class="panel"><a href="#drugRequests" data-transition="slide" data-icon="grid">Drug Requests</a></div>
+        <div class="panel"><a href="#drugReports" data-transition="slide" data-icon="grid">Drug Reports</a></div>
+        <div class="panel"><a href="#loginPopup" data-rel="popup" data-transition="slideup">Sign In</a></div>
+        <div class="panel"><a href="#">Sign Out</a></div>
+
+    </div>
     <div data-role="header" id="hdrReg">
-        <a href="#" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
+        <a href="#registerPanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
         <h1>Drug Reaction</h1>
     </div>
         <div data-role="content">
@@ -238,9 +258,19 @@
 </div>
 
 <div data-role="page" id="drugRequests" data-theme="b">
+    <div data-role="panel" data-position="left" data-display="reveal" id="requestPanel">
+
+        <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
+        <div class="panel"><a href="#homePage" data-transition="slide" data-icon="grid">Home</a><span class="icon"></span></div>
+        <div class="panel"><a href="#drugRequests" data-transition="slide" data-icon="grid">Drug Requests</a></div>
+        <div class="panel"><a href="#drugReports" data-transition="slide" data-icon="grid">Drug Reports</a></div>
+        <div class="panel"><a href="#loginPopup" data-rel="popup" data-transition="slideup">Sign In</a></div>
+        <div class="panel"><a href="#">Sign Out</a></div>
+
+    </div>
     <div data-role="header">
         <h3>Drug Requests</h3>
-        <a href="#" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
+        <a href="#requestPanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
     </div>
 
     <div data-role="content">
@@ -290,8 +320,18 @@
 </div>
 
 <div data-role="page" id="drugReports" data-theme="b">
+    <div data-role="panel" data-position="left" data-display="reveal" id="reportPanel">
+
+        <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
+        <div class="panel"><a href="#homePage" data-transition="slide" data-icon="grid">Home</a><span class="icon"></span></div>
+        <div class="panel"><a href="#drugRequests" data-transition="slide" data-icon="grid">Drug Requests</a></div>
+        <div class="panel"><a href="#drugReports" data-transition="slide" data-icon="grid">Drug Reports</a></div>
+        <div class="panel"><a href="#loginPopup" data-rel="popup" data-transition="slideup">Sign In</a></div>
+        <div class="panel"><a href="#">Sign Out</a></div>
+
+    </div>
     <div data-role="header">
-        <a href="#" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
+        <a href="#reportPanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
         <h3>Drug Reports</h3>
     </div>
 
@@ -305,8 +345,18 @@
 </div>
 
 <div data-role="page" id="reportDrugPage" data-theme="b">
+    <div data-role="panel" data-position="left" data-display="reveal" id="reportDrugPanel">
+
+        <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
+        <div class="panel"><a href="#homePage" data-transition="slide" data-icon="grid">Home</a><span class="icon"></span></div>
+        <div class="panel"><a href="#drugRequests" data-transition="slide" data-icon="grid">Drug Requests</a></div>
+        <div class="panel"><a href="#drugReports" data-transition="slide" data-icon="grid">Drug Reports</a></div>
+        <div class="panel"><a href="#loginPopup" data-rel="popup" data-transition="slideup">Sign In</a></div>
+        <div class="panel"><a href="#">Sign Out</a></div>
+
+    </div>
         <div data-role="header">
-            <a href="#" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
+            <a href="#reportDrugPanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
             <h2>Report Drug</h2>
         </div>
         <div data-role="content">
