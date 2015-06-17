@@ -36,26 +36,26 @@
         <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
         <div class="panel"><a href="#homePage" data-transition="slide"><div>Home</div></a></div>
         <div class="panel"><a href="#checkDrugPopup" data-rel="popup" data-transition="slideup"><div>Check Drug</div></a></div>
-        <div class="panel"><a href="#drugRequests" data-transition="slide"><div>Drug Requests</div></a></div>
-        <div class="panel"><a href="#drugReports" data-transition="slide"><div>Drug Reports</div></a></div>
+        <div class="panel"><a href="#drugRequests" rel="external" data-transition="slide"><div>Drug Requests</div></a></div>
+        <div class="panel"><a href="#drugReports" rel="external" data-transition="slide"><div>Drug Reports</div></a></div>
         <div class="panel"><a href="#loginPopup" data-rel="popup" data-transition="slideup"><div>Sign In</div></a></div>
         <div class="panel"><a href="#"><div>Sign Out</div></a></div>
 
     </div>
-    <div data-role="header">
+    <div data-role="header" style="background-color: green; color: #FFFFFF;">
         <a href="#homePanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
         <h3>Drug Reaction</h3>
     </div>
 
     <div data-role="content">
-        <picture>
+        <div align="center"><picture>
             <source src="sizedImages/maxresdefaultsmall.jpg">
-            <source src="sizedImages/maxresdefaultmedium.jpg" media="(min-width:440px)">
+            <source src="sizedImages/maxresdefaultmedium.jpg" media="(min-width:240px)">
             <source src="sizedImages/maxresdefault.jpg" media="(min-width:600px)">
             <noscript>
                 <img src="sizedImages/maxresdefault.jpg">
             </noscript>
-        </picture>
+        </picture></div>
         <script type="text/javascript">
             $(function(){
                 $('picture').picture();
@@ -71,13 +71,12 @@
                         featuredDrugDosage.innerHTML = 'Dosage: ' + this.dosage;
                         featuredDrugEffects.innerHTML = 'Known Side Effects: ' + this.sideSigns + ', ' + this.sideSymptoms;
                     });
-
                 });
             </script>
-            <div id="featuredDrugName" style="height: 30px; background-color: #a7b559; padding-top: 5px; padding-left: 5px; color: #000000;"></div>
-            <div id="featuredDrugSickness" style="height: 30px; background-color: #bbbbbb;padding-top: 5px; padding-left: 5px; color: #000000;"></div>
-            <div id="featuredDrugDosage" style="height: 30px; background-color: #e1f0de; padding-top: 5px;padding-left: 5px; color: #000000;"></div>
-            <div id="featuredDrugEffects" style="height: auto; background-color: #bbbbbb; padding-top: 5px;padding-left: 5px; color: #000000;"></div>
+            <div id="featuredDrugName" style=""></div>
+            <div id="featuredDrugSickness" style=""></div>
+            <div id="featuredDrugDosage" style=""></div>
+            <div id="featuredDrugEffects" style=""></div>
         </div>
 
     </div>
@@ -88,7 +87,7 @@
                 <h2>Select Drug</h2>
             </div>
             <div data-role="content">
-                <label for="selectDrug">Select Drug</label>
+                <label for="selectDrug">Drug</label>
                 <select id="selectDrug" name="selectDrug"><option>lllllllllllll</option></select>
                 <script type="text/javascript">
                         $.getJSON("http://localhost/DrugreactSysWeb/Php/drugsJSON.php", function(data){
@@ -200,8 +199,6 @@
                 <input type="submit" id="register" name="register" value="Register" data-inline="true"/>
             </div>
         </form>
-
-
     </div>
 
     <div data-role="footer">
@@ -250,7 +247,6 @@
             });
             return false;
         });
-
     </script>
 </div>
 
@@ -266,12 +262,28 @@
         <div class="panel"><a href="#"><div>Sign Out</div></a></div>
 
     </div>
-    <div data-role="header">
+    <div data-role="header" style="background-color: orange; color: #FFFFFF;">
         <h3>Drug Requests</h3>
         <a href="#requestPanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
     </div>
 
     <div data-role="content">
+        <div id="requestJSONDiv"></div>
+        <script type="text/javascript">
+
+            $.getJSON("http://localhost/DrugreactSysWeb/Php/drugRequestsJSON.php", function(data){
+                $.each(data, function(){
+                    $('#requestJSONDiv').append($('<div style="padding-bottom: 10px">')
+                            .append($('<div>').append(this.reqSickness))
+                            .append($('<div>').append(this.reqSigns))
+                            .append($('<div>').append(this.reqSymptoms))
+                            .append($('<div>').append(this.sicknessPeriod))
+                            .append($('<div>').append(this.date))
+                            .append($('<div>').append(this.answer)));
+                });
+            });
+        </script>
+
         <a href="#requestDrugPopup" data-rel="popup" data-transition="slideup" data-icon="grid">Request Drug</a>
     </div>
     <div data-role="footer">
@@ -313,7 +325,6 @@
             });
             return false;
         });
-
     </script>
 </div>
 
@@ -329,12 +340,29 @@
         <div class="panel"><a href="#"><div>Sign Out</div></a></div>
 
     </div>
-    <div data-role="header">
+    <div data-role="header" style="background-color: blueviolet; color: #FFFFFF;">
         <a href="#reportPanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
         <h3>Drug Reports</h3>
     </div>
 
     <div data-role="content">
+        <div id="reportJSONDiv"></div>
+        <script type="text/javascript">
+
+            $.getJSON("http://localhost/DrugreactSysWeb/Php/drugReportsJSON.php", function(data){
+                $.each(data, function(){
+                    $('#reportJSONDiv').append($('<div style="padding-bottom: 10px">')
+                            .append($('<div>').append(this.repDrugName))
+                            .append($('<div>').append(this.repSickness))
+                            .append($('<div>').append(this.repDosage))
+                            .append($('<div>').append(this.repSideSigns))
+                            .append($('<div>').append(this.repSideSymptoms))
+                            .append($('<div>').append(this.repMedPeriod))
+                            .append($('<div>').append(this.date))
+                            .append($('<div>').append(this.answer)));
+                });
+            });
+        </script>
         <a href="#reportDrugPage"  data-transition="slide" data-icon="grid">Report Drug</a>
 
     </div>
@@ -391,7 +419,6 @@
             });
             return false;
         });
-
     </script>
 </div>
 <script type="text/javascript">

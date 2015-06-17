@@ -25,7 +25,6 @@
 .panel{
     padding-top: 10px;
     padding-bottom: 10px;
-    /*background-color: #000000;*/
     margin: 5px;
     padding-left: 30px;
     border-bottom: groove 1px;
@@ -33,4 +32,30 @@
 .panel a:link, a:visited, a:hover, a:active{
     color: #FFFFFF;
     text-decoration: none !important;
+}
+#featuredDrugName{
+    height: 30px;
+    background-color: #a7b559;
+    padding-top: 5px; padding-left: 5px;
+    color:  #000000;
+}
+#featuredDrugSickness{
+    height: 30px;
+    background-color: #bbbbbb;
+    padding-top: 5px; padding-left: 5px;
+    color: #454545;
+    font-weight: lighter;
+}
+
+#featuredDrugDosage{
+    height: 30px;
+    background-color: #e1f0de;
+    padding-top: 5px;padding-left: 5px;
+    color: #454545;
+}
+#featuredDrugEffects{
+    height: auto;
+    background-color: cornsilk;
+    padding-top: 5px;padding-left: 5px;
+    color: #454545;
 }
