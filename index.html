@@ -17,6 +17,7 @@
     <script type="text/javascript" src="jQuery-Picture/js/jquery-picture-min.js"></script>
     <script type="text/javascript" src="jQuery-Picture/js/jquery-picture.js"></script>
     <script type="text/javascript" src="jQuery-Picture/demo/assets/js/modernizr.js"></script>
+    <script type="text/javascript" src="jquery/jquery.mobile.dynamic.popup.js"></script>
     <script type="text/javascript">
 
         $(function() {
@@ -25,6 +26,29 @@
 
         var EMPTY = "";
         var MISSING = "missing";
+
+        $(document).delegate('', 'pageinit', function() {
+
+            $('#homeCheckDrug, #requestCheckDrug').on('tap', function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            $.dynamic_popup({
+                content:'<label for="selectDrug">Drug</label>' +
+                        '<select id="selectDrug" name="selectDrug"><option>lllllllllllll</option></select>',
+                'data-transition': 'slideup',
+                'data-theme': 'b'
+            });
+                $.getJSON("http://localhost/DrugreactSysWeb/Php/drugsJSON.php", function(data){
+                    var select = $('#selectDrug');
+                    $.each(data, function(){
+                        select.append($("<option />").val(this.drugName).text(this.drugName));
+                    });
+                });
+            });
+        });
+
+
+
     </script>
 
 </head>
@@ -33,13 +57,22 @@
 <div data-role="page" id="homePage" data-theme="b">
     <div data-role="panel" data-position="left" data-display="reveal" id="homePanel">
 
+        <!--<div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>-->
+        <!--<div class="panel"><a href="#homePage" data-transition="slide"><div>Home</div></a></div>-->
+        <!--<div class="panel"><a href="#checkDrugPopup" data-rel="popup" data-transition="slideup"><div>Check Drug</div></a></div>-->
+        <!--<div class="panel"><a href="#drugRequests" rel="external" data-transition="slide"><div>Drug Requests</div></a></div>-->
+        <!--<div class="panel"><a href="#drugReports" rel="external" data-transition="slide"><div>Drug Reports</div></a></div>-->
+        <!--<div class="panel"><a href="#loginPopup" data-rel="popup" data-transition="slideup"><div>Sign In</div></a></div>-->
+        <!--<div class="panel"><a href="#"><div>Sign Out</div></a></div>-->
+
         <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
-        <div class="panel"><a href="#homePage" data-transition="slide"><div>Home</div></a></div>
-        <div class="panel"><a href="#checkDrugPopup" data-rel="popup" data-transition="slideup"><div>Check Drug</div></a></div>
-        <div class="panel"><a href="#drugRequests" rel="external" data-transition="slide"><div>Drug Requests</div></a></div>
-        <div class="panel"><a href="#drugReports" rel="external" data-transition="slide"><div>Drug Reports</div></a></div>
-        <div class="panel"><a href="#loginPopup" data-rel="popup" data-transition="slideup"><div>Sign In</div></a></div>
-        <div class="panel"><a href="#"><div>Sign Out</div></a></div>
+        <div class="panel" data-transition="slide" onclick="location.href='#homePage'">Home</div>
+        <div class="panel" id="homeCheckDrug">Check Drug</div>
+        <div class="panel" data-transition="slide" onclick="location.href='#drugRequests'">Drug Requests</div>
+        <div class="panel" data-transition="slide" onclick="location.href='#drugReports'">Drug Reports</div>
+        <div class="panel" data-rel="popup" data-transition="slideup" onclick="location.href='#loginPopup'">Sign In</div>
+        <!--<div class="panel"><a href="#loginPopup" data-rel="popup" data-transition="slideup"><div>Sign In</div></a></div>-->
+        <div class="panel">Sign Out</div>
 
     </div>
     <div data-role="header" style="background-color: green; color: #FFFFFF;">
@@ -87,16 +120,16 @@
                 <h2>Select Drug</h2>
             </div>
             <div data-role="content">
-                <label for="selectDrug">Drug</label>
-                <select id="selectDrug" name="selectDrug"><option>lllllllllllll</option></select>
-                <script type="text/javascript">
-                        $.getJSON("http://localhost/DrugreactSysWeb/Php/drugsJSON.php", function(data){
-                            var select = $('#selectDrug');
-                            $.each(data, function(){
-                                select.append($("<option />").val(this.drugName).text(this.drugName));
-                            });
-                        });
-                </script>
+                <!--<label for="selectDrug">Drug</label>-->
+                <!--<select id="selectDrug" name="selectDrug"><option>lllllllllllll</option></select>-->
+                <!--<script type="text/javascript">-->
+                        <!--$.getJSON("http://localhost/DrugreactSysWeb/Php/drugsJSON.php", function(data){-->
+                            <!--var select = $('#selectDrug');-->
+                            <!--$.each(data, function(){-->
+                                <!--select.append($("<option />").val(this.drugName).text(this.drugName));-->
+                            <!--});-->
+                        <!--});-->
+                <!--</script>-->
                 <input type="submit" value="check" id="checkDrugButton" data-inline="true"/>
             </div>
         </form>
@@ -280,6 +313,7 @@
                             .append($('<div>').append(this.sicknessPeriod))
                             .append($('<div>').append(this.date))
                             .append($('<div>').append(this.answer)));
+
                 });
             });
         </script>
@@ -424,6 +458,13 @@
 <script type="text/javascript">
 
     $(document).ready(function(){
+
+            $.getJSON("http://localhost/DrugreactSysWeb/Php/drugsJSON.php", function(data){
+                var select = $('#selectDrug');
+                $.each(data, function(){
+                    select.append($("<option />").val(this.drugName).text(this.drugName));
+                });
+            });
 
     });
 </script>
