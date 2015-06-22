@@ -9,9 +9,7 @@
     <script src="jquery/jquery-ui.js" type="text/javascript"></script>
     <script src="jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
     <script src="jquery/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
-    <!--<link href="jquery-mobile-slide-menu.css" rel="stylesheet"/>-->
     <link href="validate/css/screen.css" rel="stylesheet">
-    <!--<script src="jquery-mobile-slide-menu.js" type="text/javascript"></script>-->
     <script type="text/javascript" src="validate/dist/jquery.validate.js"></script>
     <script type="application/javascript" src="js/fastclick.js"></script>
     <script type="text/javascript" src="jQuery-Picture/js/jquery-picture-min.js"></script>
@@ -44,27 +42,27 @@
                 });
             });
         }
-
         function signInPopup() {
             $.dynamic_popup({
-                content:'<div data-role="content">'+
+                content:
+                '<div data-role="content" data-theme="b">'+
+                '<div style="padding-bottom: 15px;">Sign In</div>'+
                 '<form id="loginForm" action="http://localhost/DrugreactSysWeb/Php/login.php">'+
-                '<div id="usernameDiv" data-role="fieldcontain">'+
-                '<input type="text" id="loginEmail" name="loginEmail" placeholder="Email"/>'+
+                '<div id="usernameDiv" data-role="fieldcontain" style="padding-bottom: 20px;">'+
+                '<input type="text" id="loginEmail" name="loginEmail" style="height: 25px;" placeholder="Email"/>'+
                 '</div>'+
-                '<div id="passwordDiv" data-role="fieldcontain">'+
-                '<input type="password" id="password" name="password" placeholder="Password" minlength="5"/>'+
+                '<div id="passwordDiv" data-role="fieldcontain" style="padding-bottom: 10px;">'+
+                '<input type="password" id="password" name="password" style="height: 25px;" placeholder="Password" minlength="5"/>'+
                 '</div>'+
                 '<div id="submitDiv" data-role="fieldcontain">'+
-                '<input type="submit" id="login" name="login" value="Login" data-inline="true"/>'+
-                '<a href="#registerPage" data-transition="flow">Sign up now</a>'+
+                '<input type="submit" id="login" name="login" value="Login" style="width: 60px; height: 30px;" data-inline="true"/>'+
+                '<a href="#registerPage" style="float: right;" data-transition="flow">Sign up now</a>'+
                 '</div>'+
                 '</form>'+
                 '</div>',
                 'data-transition': 'slideup',
                 'data-theme': 'b'
             });
-
             $("#loginForm").validate({
                 rules:{
                     loginEmail:{
@@ -82,7 +80,6 @@
                     }
                 }
             });
-
             $('#loginForm').submit(function(e) {
 
                 var $this = $(this);
@@ -90,7 +87,6 @@
                 $.post($this.attr('action'), $this.serialize(), function(data){
                     //loginPopup.hide();
                     document.write(data);
-
                 });
                 return false;
             });
@@ -104,10 +100,10 @@
     <div data-role="panel" data-position="left" data-display="reveal" id="homePanel">
 
         <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
-        <div class="panel" data-transition="slide" onclick="location.href='#homePage'">Home</div>
+        <div class="panel" onclick="location.href='#homePage'">Home</div>
         <div class="panel" onclick="checkDrugPopup();">Check Drug</div>
-        <div class="panel" data-transition="slide" onclick="location.href='#drugRequests'">Drug Requests</div>
-        <div class="panel" data-transition="slide" onclick="location.href='#drugReports'">Drug Reports</div>
+        <div class="panel" onclick="location.href='#drugRequests'">Drug Requests</div>
+        <div class="panel" onclick="location.href='#drugReports'">Drug Reports</div>
         <div class="panel" onclick="signInPopup();">Sign In</div>
         <div class="panel">Sign Out</div>
 
@@ -151,63 +147,6 @@
 
     </div>
 
-
-    <!--<div data-role="popup" id="loginPopup" data-position-to="window" data-theme="b">-->
-        <!--<div data-role="header" id="hdrMain">-->
-            <!--<h1>Login</h1>-->
-        <!--</div>-->
-        <!--<div data-role="content">-->
-            <!--<form id="loginForm" action="http://localhost/DrugreactSysWeb/Php/login.php">-->
-                <!--<div id="usernameDiv" data-role="fieldcontain">-->
-                    <!--<input type="text" id="loginEmail" name="loginEmail" placeholder="Email"/>-->
-                <!--</div>-->
-                <!--<div id="passwordDiv" data-role="fieldcontain">-->
-                    <!--<input type="password" id="password" name="password" placeholder="Password" minlength="5"/>-->
-                <!--</div>-->
-                <!--<div id="submitDiv" data-role="fieldcontain">-->
-                    <!--<input type="submit" id="login" name="login" value="Login" data-inline="true"/>-->
-                    <!--<a href="#registerPage" data-transition="flow">Sign up now</a>-->
-                <!--</div>-->
-
-            <!--</form>-->
-
-        <!--</div>-->
-
-    <!--</div>-->
-
-    <script type="text/javascript">
-
-//        $().ready(function(){
-//            $("#loginForm").validate({
-//                rules:{
-//                    loginEmail:{
-//                        required: true,
-//                        email: true
-//                    },
-//                    password:{
-//                        required: true,
-//                        minlength: 5
-//                    }
-//                },
-//                messages:{
-//                    password:{
-//                        minlength: "Minimum length must be 5"
-//                    }
-//                }
-//            });
-//        });
-//        $('#loginForm').submit(function(e) {
-//
-//            var $this = $(this);
-//            e.preventDefault();
-//            $.post($this.attr('action'), $this.serialize(), function(data){
-//                //loginPopup.hide();
-//                document.write(data);
-//
-//            });
-//            return false;
-//        });
-    </script>
 </div>
 
 <div data-role="page" id="registerPage" data-theme="b">
@@ -318,6 +257,7 @@
     </div>
 
     <div data-role="content">
+        <a href="#requestDrugPopup" data-rel="popup" data-transition="slideup" data-role="button" data-inline="true">Request Drug</a>
         <div id="requestJSONDiv"></div>
         <script type="text/javascript">
 
@@ -335,7 +275,6 @@
             });
         </script>
 
-        <a href="#requestDrugPopup" data-rel="popup" data-transition="slideup" data-icon="grid">Request Drug</a>
     </div>
     <div data-role="footer">
 
@@ -397,6 +336,7 @@
     </div>
 
     <div data-role="content">
+        <a href="#reportDrugPage" data-transition="slideup" data-role="button" data-inline="true">Report Drug</a>
         <div id="reportJSONDiv"></div>
         <script type="text/javascript">
 
@@ -414,7 +354,6 @@
                 });
             });
         </script>
-        <a href="#reportDrugPage"  data-transition="slide" data-icon="grid">Report Drug</a>
 
     </div>
     <div data-role="footer">
@@ -472,8 +411,5 @@
         });
     </script>
 </div>
-<script type="text/javascript">
-    
-</script>
 </body>
 </html>
