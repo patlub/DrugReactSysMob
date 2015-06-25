@@ -10,27 +10,27 @@
     <script src="jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
     <script src="jquery/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
     <link href="validate/css/screen.css" rel="stylesheet">
-    <script type="text/javascript" src="validate/dist/jquery.validate.js"></script>
+    <script type="text/javascript" src="validate/dist/jquery.validate.min.js"></script>
     <script type="application/javascript" src="js/fastclick.js"></script>
     <script type="text/javascript" src="jQuery-Picture/js/jquery-picture-min.js"></script>
     <script type="text/javascript" src="jQuery-Picture/js/jquery-picture.js"></script>
     <script type="text/javascript" src="jQuery-Picture/demo/assets/js/modernizr.js"></script>
     <script type="text/javascript" src="jquery/jquery.mobile.dynamic.popup.js"></script>
     <script type="text/javascript">
-
         $(function() {
             FastClick.attach(document.body);
         });
 
         var EMPTY = "";
         var MISSING = "missing";
+///        var contentTransitionVar = null;
 
         function checkDrugPopup() {
             $.dynamic_popup({
                 content: '<form>' +
-                '<div></div><label for="selectDrug">Drug</label></div>' +
-                '<div></div><select id="selectDrug" name="selectDrug"><option>lllllllllllll</option></select></div>' +
-                '<div></div><input type="submit" value="check" id="checkDrugButton" data-inline="true"/></div>' +
+                '<div><label for="selectDrug">Select Drug</label></div>' +
+                '<div style="padding-bottom: 10px;"><select id="selectDrug" name="selectDrug"  style="width: 120px; height: 25px;"><option>lllllllllllll</option></select></div>' +
+                '<div><input type="submit" value="check" id="checkDrugButton" style="width: 60px; height: 30px;" data-inline="true"/></div>' +
                 '</form>',
                 'data-transition': 'slideup',
                 'data-theme': 'b'
@@ -49,10 +49,10 @@
                 '<div style="padding-bottom: 15px;">Sign In</div>'+
                 '<form id="loginForm" action="http://localhost/DrugreactSysWeb/Php/login.php">'+
                 '<div id="usernameDiv" data-role="fieldcontain" style="padding-bottom: 20px;">'+
-                '<input type="text" id="loginEmail" name="loginEmail" style="height: 25px;" placeholder="Email"/>'+
+                '<input type="email" id="loginEmail" name="loginEmail" style="height: 25px;" placeholder="Email" oninvalid="this.style.borderColor=#FF0000" required/>'+
                 '</div>'+
                 '<div id="passwordDiv" data-role="fieldcontain" style="padding-bottom: 10px;">'+
-                '<input type="password" id="password" name="password" style="height: 25px;" placeholder="Password" minlength="5"/>'+
+                '<input type="password" id="password" name="password" style="height: 25px;" placeholder="Password" minlength="5" required/>'+
                 '</div>'+
                 '<div id="submitDiv" data-role="fieldcontain">'+
                 '<input type="submit" id="login" name="login" value="Login" style="width: 60px; height: 30px;" data-inline="true"/>'+
@@ -61,8 +61,10 @@
                 '</form>'+
                 '</div>',
                 'data-transition': 'slideup',
-                'data-theme': 'b'
+                'data-theme': 'b',
+                'data-position-to': 'center'
             });
+
             $("#loginForm").validate({
                 rules:{
                     loginEmail:{
@@ -86,9 +88,24 @@
                 e.preventDefault();
                 $.post($this.attr('action'), $this.serialize(), function(data){
                     //loginPopup.hide();
-                    document.write(data);
+                    //session_var = data;
+                    //document.write(data);
+                    location.href = '#homePage';
                 });
                 return false;
+            });
+        }
+        function spinner(){
+            $.dynamic_popup({
+                content:
+                '<div data-role="content" id="spinner" data-overlay-theme="a">'+
+                '<div align="CENTER"><img id="spin" name="spin" src="jquery/images/ajax-loader.gif"/></div>'+
+                '</div>',
+                'data-transition': 'none',
+                'data-theme': 'b',
+                'data-dismissible': 'false',
+                'data-overlay-theme': 'c',
+                'data-position-to': 'center'
             });
         }
     </script>
@@ -126,17 +143,41 @@
             $(function(){
                 $('picture').picture();
             });
+            $().ready(function(){spinner();});
+
+
         </script>
         <div>
-           <div style="padding-top: 10px; padding-bottom: 5px; text-align: center; font-weight: bold;">Featured Drug</div>
+            <!--<div data-role="content" id="spinner" data-overlay-theme="a">-->
+                <!--<div align="CENTER"><img id="spin" name="spin" src="jquery/images/ajax-loader.gif"/></div>-->
+            <!--</div>	&lt;!&ndash; contentTransition &ndash;&gt;-->
+           <div id="featuredDrug" style="padding-top: 10px; padding-bottom: 5px; text-align: center; font-weight: bold;">Featured Drug</div>
+
             <script type="text/javascript">
-                $.getJSON("http://localhost/DrugreactSysWeb/Php/featuredDrug.php", function(data){
-                    $.each(data, function(){
-                        featuredDrugName.innerHTML = this.drugName;
-                        featuredDrugSickness.innerHTML = 'Treatment For: ' + this.sickness;
-                        featuredDrugDosage.innerHTML = 'Dosage: ' + this.dosage;
-                        featuredDrugEffects.innerHTML = 'Known Side Effects: ' + this.sideSigns + ', ' + this.sideSymptoms;
+                $(document).ready(function(){
+                    $.ajax({
+                        dataType: "json",
+                        url: "http://localhost/DrugreactSysWeb/Php/featuredDrug.php",
+                        beforeSend: function () {
+
+                        },
+                        success: function(data){
+                                $.each(data, function(){
+                                featuredDrugName.innerHTML = this.drugName;
+                                featuredDrugSickness.innerHTML = 'Treatment For: ' + this.sickness;
+                                featuredDrugDosage.innerHTML = 'Dosage: ' + this.dosage;
+                                featuredDrugEffects.innerHTML = 'Known Side Effects: ' + this.sideSigns + ', ' + this.sideSymptoms;
+                            });
+                            location.href = "#";
+                        },
+                        complete: function(){
+
+                        },
+                        error: function () {
+
+                        }
                     });
+//                    $('#spinner').hide();
                 });
             </script>
             <div id="featuredDrugName" style=""></div>
@@ -148,6 +189,7 @@
     </div>
 
 </div>
+
 
 <div data-role="page" id="registerPage" data-theme="b">
     <div data-role="panel" data-position="left" data-display="reveal" id="registerPanel">
@@ -168,22 +210,20 @@
         <div data-role="content">
         <form id="registrationForm" action="http://localhost/DrugreactSysWeb/Php/register.php">
             <div id="firstnameDiv" data-role="fieldcontain">
-                <input type="text" id="firstName" name="firstname" placeholder="First Name"/>
+                <input type="text" id="firstName" name="firstname" placeholder="First Name" required />
             </div>
             <div id="lastnameDiv" data-role="fieldcontain">
-                <input type="text" id="lastName" name="lastname" placeholder="Last Name"/>
+                <input type="text" id="lastName" name="lastname" placeholder="Last Name" oninvalid="this.style.borderColor='#FF0000';" required />
             </div>
             <div id="emailDiv" data-role="fieldcontain">
-                <input type="text" id="email" name="email" placeholder="Email Address"/>
+                <input type="email" id="email" name="email" placeholder="Email Address" oninvalid="this.style.borderColor='#FF0000';" required />
             </div>
             <div id="passwordregDiv" data-role="fieldcontain">
-                <input type="password" id="passwordReg" name="passwordreg" placeholder="Password"/>
+                <input type="password" id="passwordReg" name="passwordreg" placeholder="Password" minlength="5" oninvalid="this.style.borderColor='#FF0000';" required />
             </div>
-
             <div id="confirmDiv" data-role="fieldcontain">
-                <input type="password" id="confirm" name="confirm" placeholder="Confirm Password"/>
+                <input type="password" id="confirm" name="confirm" placeholder="Confirm Password" minlength="5" oninvalid="this.style.borderColor='#FF0000';" required/>
             </div>
-
             <div id="registerDiv" data-role="fieldcontain">
                 <input type="submit" id="register" name="register" value="Register" data-inline="true"/>
             </div>
@@ -195,43 +235,59 @@
     </div>
 
     <script type="text/javascript">
-        $().ready(function(){
-            $("#registrationForm").validate({
-                rules:{
-                    firstname: "required",
-                    lastname : "required",
-                    email:{
-                        required: true,
-                        email: true
-                    },
-                    passwordreg:{
-                        required: true,
-                        minlength: 5
-                    },
-                    confirm:{
-                        required: true,
-                        minlength: 5,
-                        equalTo: "#passwordReg"
-                    }
-                },
-                messages:{
-                    passwordreg:{
-                        minlength: "Minimum length must be 5"
-                    },
-                    confirm:{
-                        minlength: "Minimum length must be 5",
-                         equalTo: "Passwords don't match"
-                    }
-                }
-            });
-        });
+//        $().ready(function(){
+//            $("#registrationForm").validate({
+//                rules:{
+//                    firstname: "required",
+//                    lastname : "required",
+//                    email:{
+//                        required: true,
+//                        email: true
+//                    },
+//                    passwordreg:{
+//                        required: true,
+//                        minlength: 5
+//                    },
+//                    confirm:{
+//                        required: true,
+//                        minlength: 5,
+//                        equalTo: "#passwordReg"
+//                    }
+//                },
+//                messages:{
+//                    passwordreg:{
+//                        minlength: "Minimum length must be 5"
+//                    },
+//                    confirm:{
+//                        minlength: "Minimum length must be 5",
+//                         equalTo: "Passwords don't match"
+//                    }
+//                }
+//            });
+//        });
         $('#registrationForm').submit(function(event) {
             var $this = $(this);
             event.preventDefault();
+            spinner();
+//            var data = $this.serialize();
 
+//            $.ajax({
+//                type: 'POST',
+//                url: 'http://localhost/DrugreactSysWeb/Php/register.php',
+//                data:'data',
+//                dataType: '',
+//                success: function(data){
+//                    alert(data);
+//                },
+//                error:function(){
+//                    alert('hello');
+//                }
+//            });
             $.post($this.attr('action'), $this.serialize(), function(data){
                 //loginPopup.hide();
-                document.write(data);
+               // session_var = data;
+                location.href = "#";
+                alert(data);
 
             });
             return false;
@@ -257,7 +313,7 @@
     </div>
 
     <div data-role="content">
-        <a href="#requestDrugPopup" data-rel="popup" data-transition="slideup" data-role="button" data-inline="true">Request Drug</a>
+        <div><a href="#requestDrugPopup" data-rel="popup" data-transition="slideup" data-role="button" data-inline="true">Request Drug</a></div>
         <div id="requestJSONDiv"></div>
         <script type="text/javascript">
 
@@ -298,14 +354,14 @@
         </script>
     </div>
     <script type="text/javascript">
-        $().ready(function(){
-            $("#requestDrugForm").validate({
-                rules:{
-                    enterSickness: "required",
-                    sicknessPeriod : "required"
-                }
-            });
-        });
+//        $().ready(function(){
+//            $("#requestDrugForm").validate({
+//                rules:{
+//                    enterSickness: "required",
+//                    sicknessPeriod : "required"
+//                }
+//            });
+//        });
         $('#requestDrugForm').submit(function(event){
             var $this = $(this);
             event.preventDefault();
@@ -336,7 +392,7 @@
     </div>
 
     <div data-role="content">
-        <a href="#reportDrugPage" data-transition="slideup" data-role="button" data-inline="true">Report Drug</a>
+        <div><a href="#reportDrugPage" data-transition="slideup" data-role="button" data-inline="true">Report Drug</a></div>
         <div id="reportJSONDiv"></div>
         <script type="text/javascript">
 
@@ -380,7 +436,7 @@
         <div data-role="content">
             <form id="reportDrugForm" action="http://localhost/DrugreactSysWeb/Php/report.php">
             <input type="text" id="enterDrugName" name="enterDrugName" placeholder="Enter Drug Name" required/>
-            <input type="text" id="reportSickness" name="reportEnterSickness" placeholder="Enter Sickness"required/>
+            <input type="text" id="reportSickness" name="reportEnterSickness" placeholder="Enter Sickness" required/>
             <input type="text" id="dosage" name="dosage" placeholder="Enter Dosage(Days)" required/>
             <textarea id="reportSigns" name="reportSigns" placeholder="(Side Effects)Signs, Enter none if noy any"></textarea>
             <textarea id="reportSymptoms" name="reportSymptoms" placeholder="(Side Effects)Symptoms, Enter none if noy any"></textarea>
@@ -391,16 +447,19 @@
         </div>
 
     <script type="text/javascript">
-        $().ready(function(){
-            $("#reportDrugForm").validate({
-                rules:{
-                    enterDrugName: "required",
-                    reportEnterSickness : "required",
-                    dosage : "required",
-                    reportMedicationPeriod: "required"
-                }
-            });
+        $(document).ready(function(){
+//        var contentTransitionVar = $('#contentTransition');
         });
+//        $().ready(function(){
+//            $("#reportDrugForm").validate({
+//                rules:{
+//                    enterDrugName: "required",
+//                    reportEnterSickness : "required",
+//                    dosage : "required",
+//                    reportMedicationPeriod: "required"
+//                }
+//            });
+//        });
         $('#reportDrugForm').submit(function(event){
             var $this =$(this);
             event.preventDefault();
