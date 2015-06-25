@@ -23,7 +23,6 @@
 
         var EMPTY = "";
         var MISSING = "missing";
-///        var contentTransitionVar = null;
 
         function checkDrugPopup() {
             $.dynamic_popup({
@@ -87,8 +86,6 @@
                 var $this = $(this);
                 e.preventDefault();
                 $.post($this.attr('action'), $this.serialize(), function(data){
-                    //loginPopup.hide();
-                    //session_var = data;
                     //document.write(data);
                     location.href = '#homePage';
                 });
@@ -104,20 +101,19 @@
                 'data-transition': 'none',
                 'data-theme': 'b',
                 'data-dismissible': 'false',
-                'data-overlay-theme': 'c',
+                'data-overlay-theme': '',
                 'data-position-to': 'center'
             });
         }
     </script>
-
 </head>
 <body>
 
 <div data-role="page" id="homePage" data-theme="b">
-    <div data-role="panel" data-position="left" data-display="reveal" id="homePanel">
+    <div data-role="panel" data-position="left" data-display="reveal" id="homePanel" data-swipe-close="true">
 
         <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
-        <div class="panel" onclick="location.href='#homePage'">Home</div>
+        <div class="panel" onclick="$.mobile.changePage('#homePage', { transition: 'slideup'} );">Home</div>
         <div class="panel" onclick="checkDrugPopup();">Check Drug</div>
         <div class="panel" onclick="location.href='#drugRequests'">Drug Requests</div>
         <div class="panel" onclick="location.href='#drugReports'">Drug Reports</div>
@@ -126,7 +122,7 @@
 
     </div>
     <div data-role="header" style="background-color: green; color: #FFFFFF;">
-        <a href="#homePanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
+        <a href="#homePanel" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
         <h3>Drug Reaction</h3>
     </div>
 
@@ -143,23 +139,18 @@
             $(function(){
                 $('picture').picture();
             });
-            $().ready(function(){spinner();});
-
-
         </script>
         <div>
-            <!--<div data-role="content" id="spinner" data-overlay-theme="a">-->
-                <!--<div align="CENTER"><img id="spin" name="spin" src="jquery/images/ajax-loader.gif"/></div>-->
-            <!--</div>	&lt;!&ndash; contentTransition &ndash;&gt;-->
+
            <div id="featuredDrug" style="padding-top: 10px; padding-bottom: 5px; text-align: center; font-weight: bold;">Featured Drug</div>
 
             <script type="text/javascript">
-                $(document).ready(function(){
+                $( document ).delegate("#homePage", "pageinit", function() {
                     $.ajax({
                         dataType: "json",
                         url: "http://localhost/DrugreactSysWeb/Php/featuredDrug.php",
                         beforeSend: function () {
-
+                            $().ready(function(){spinner();});
                         },
                         success: function(data){
                                 $.each(data, function(){
@@ -168,16 +159,15 @@
                                 featuredDrugDosage.innerHTML = 'Dosage: ' + this.dosage;
                                 featuredDrugEffects.innerHTML = 'Known Side Effects: ' + this.sideSigns + ', ' + this.sideSymptoms;
                             });
-                            location.href = "#";
                         },
                         complete: function(){
+                            location.href = "#";
 
                         },
                         error: function () {
 
                         }
                     });
-//                    $('#spinner').hide();
                 });
             </script>
             <div id="featuredDrugName" style=""></div>
@@ -185,11 +175,8 @@
             <div id="featuredDrugDosage" style=""></div>
             <div id="featuredDrugEffects" style=""></div>
         </div>
-
     </div>
-
 </div>
-
 
 <div data-role="page" id="registerPage" data-theme="b">
     <div data-role="panel" data-position="left" data-display="reveal" id="registerPanel">
@@ -268,24 +255,8 @@
         $('#registrationForm').submit(function(event) {
             var $this = $(this);
             event.preventDefault();
-            spinner();
-//            var data = $this.serialize();
 
-//            $.ajax({
-//                type: 'POST',
-//                url: 'http://localhost/DrugreactSysWeb/Php/register.php',
-//                data:'data',
-//                dataType: '',
-//                success: function(data){
-//                    alert(data);
-//                },
-//                error:function(){
-//                    alert('hello');
-//                }
-//            });
             $.post($this.attr('action'), $this.serialize(), function(data){
-                //loginPopup.hide();
-               // session_var = data;
                 location.href = "#";
                 alert(data);
 
@@ -316,21 +287,36 @@
         <div><a href="#requestDrugPopup" data-rel="popup" data-transition="slideup" data-role="button" data-inline="true">Request Drug</a></div>
         <div id="requestJSONDiv"></div>
         <script type="text/javascript">
+            $( document ).delegate("#drugRequests", "pageinit", function() {
+                $.ajax({
+                    dataType: "json",
+                    url: "http://localhost/DrugreactSysWeb/Php/drugRequestsJSON.php",
+                    beforeSend: function () {
+//                        $().ready(function(){spinner();});
+                        spinner();
+                    },
+                    success: function(data){
+                        $.each(data, function(){
+                            $('#requestJSONDiv').append($('<div style="padding-bottom: 10px">')
+                                    .append($('<div>').append(this.reqSickness))
+                                    .append($('<div>').append(this.reqSigns))
+                                    .append($('<div>').append(this.reqSymptoms))
+                                    .append($('<div>').append(this.sicknessPeriod))
+                                    .append($('<div>').append(this.date))
+                                    .append($('<div>').append(this.answer)));
 
-            $.getJSON("http://localhost/DrugreactSysWeb/Php/drugRequestsJSON.php", function(data){
-                $.each(data, function(){
-                    $('#requestJSONDiv').append($('<div style="padding-bottom: 10px">')
-                            .append($('<div>').append(this.reqSickness))
-                            .append($('<div>').append(this.reqSigns))
-                            .append($('<div>').append(this.reqSymptoms))
-                            .append($('<div>').append(this.sicknessPeriod))
-                            .append($('<div>').append(this.date))
-                            .append($('<div>').append(this.answer)));
+                        });
+                    },
+                    complete: function(){
+                        location.href = "#drugRequests";
+                    },
+                    error: function () {
 
+                    }
                 });
+
             });
         </script>
-
     </div>
     <div data-role="footer">
 
@@ -395,18 +381,33 @@
         <div><a href="#reportDrugPage" data-transition="slideup" data-role="button" data-inline="true">Report Drug</a></div>
         <div id="reportJSONDiv"></div>
         <script type="text/javascript">
+            $( document ).delegate("#drugReports", "pageinit", function() {
+                $.ajax({
+                    dataType: "json",
+                    url: "http://localhost/DrugreactSysWeb/Php/drugReportsJSON.php",
+                    beforeSend: function () {
+                        $().ready(function(){spinner();});
+                    },
+                    success: function(data){
+                        $.each(data, function(){
+                            $('#reportJSONDiv').append($('<div style="padding-bottom: 10px">')
+                                    .append($('<div>').append(this.repDrugName))
+                                    .append($('<div>').append(this.repSickness))
+                                    .append($('<div>').append(this.repDosage))
+                                    .append($('<div>').append(this.repSideSigns))
+                                    .append($('<div>').append(this.repSideSymptoms))
+                                    .append($('<div>').append(this.repMedPeriod))
+                                    .append($('<div>').append(this.date))
+                                    .append($('<div>').append(this.answer)));
+                        });
+                    },
+                    complete: function(){
+                        location.href = "#drugReports";
 
-            $.getJSON("http://localhost/DrugreactSysWeb/Php/drugReportsJSON.php", function(data){
-                $.each(data, function(){
-                    $('#reportJSONDiv').append($('<div style="padding-bottom: 10px">')
-                            .append($('<div>').append(this.repDrugName))
-                            .append($('<div>').append(this.repSickness))
-                            .append($('<div>').append(this.repDosage))
-                            .append($('<div>').append(this.repSideSigns))
-                            .append($('<div>').append(this.repSideSymptoms))
-                            .append($('<div>').append(this.repMedPeriod))
-                            .append($('<div>').append(this.date))
-                            .append($('<div>').append(this.answer)));
+                    },
+                    error: function () {
+
+                    }
                 });
             });
         </script>
@@ -447,9 +448,6 @@
         </div>
 
     <script type="text/javascript">
-        $(document).ready(function(){
-//        var contentTransitionVar = $('#contentTransition');
-        });
 //        $().ready(function(){
 //            $("#reportDrugForm").validate({
 //                rules:{
@@ -470,5 +468,14 @@
         });
     </script>
 </div>
+<script type="text/javascript">
+    $('body').on('swiperight', function () {
+        $('#homePanel,#reportDrugPanel,#registerPanel,#requestPanel,#reportPanel').panel('open', '');
+    });
+
+    $('body').on('swipeleft', function () {
+        $('#homePanel,#reportDrugPanel,#registerPanel,#requestPanel,#reportPanel').panel('close', '');
+    });
+</script>
 </body>
 </html>
