@@ -23,12 +23,13 @@
 
         var EMPTY = "";
         var MISSING = "missing";
+        var session_var = null;
 
         function checkDrugPopup() {
             $.dynamic_popup({
                 content: '<form>' +
                 '<div><label for="selectDrug">Select Drug</label></div>' +
-                '<div style="padding-bottom: 10px;"><select id="selectDrug" name="selectDrug"  style="width: 120px; height: 25px;"><option>lllllllllllll</option></select></div>' +
+                '<div style="padding-bottom: 10px;"><select id="selectDrug" name="selectDrug"  style="width: 120px; height: 25px;"><option>Select Drug</option></select></div>' +
                 '<div><input type="submit" value="check" id="checkDrugButton" style="width: 60px; height: 30px;" data-inline="true"/></div>' +
                 '</form>',
                 'data-transition': 'slideup',
@@ -55,7 +56,8 @@
                 '</div>'+
                 '<div id="submitDiv" data-role="fieldcontain">'+
                 '<input type="submit" id="login" name="login" value="Login" style="width: 60px; height: 30px;" data-inline="true"/>'+
-                '<a href="#registerPage" style="float: right;" data-transition="flow">Sign up now</a>'+
+                '<p style="float: right; color: #00FF00;" onclick="signUp();">'+
+                'Sign up now</p>'+
                 '</div>'+
                 '</form>'+
                 '</div>',
@@ -85,25 +87,25 @@
 
                 var $this = $(this);
                 e.preventDefault();
+                var interval = setInterval(function(){
+                    $.mobile.loading('show');
+                    clearInterval(interval);
+                });
                 $.post($this.attr('action'), $this.serialize(), function(data){
-                    //document.write(data);
-                    location.href = '#homePage';
+                    var interval = setInterval(function(){
+                        $.mobile.loading('hide');
+                        clearInterval(interval);
+                    });
+                    if(data) {
+                        alert(data);
+                        session_var = true;
+                    }
                 });
                 return false;
             });
         }
-        function spinner(){
-            $.dynamic_popup({
-                content:
-                '<div data-role="content" id="spinner" data-overlay-theme="a">'+
-                '<div align="CENTER"><img id="spin" name="spin" src="jquery/images/ajax-loader.gif"/></div>'+
-                '</div>',
-                'data-transition': 'none',
-                'data-theme': 'b',
-                'data-dismissible': 'false',
-                'data-overlay-theme': '',
-                'data-position-to': 'center'
-            });
+        function signUp(){
+            $.mobile.changePage('#registerPage', {transition: 'flow'});
         }
     </script>
 </head>
@@ -113,17 +115,17 @@
     <div data-role="panel" data-position="left" data-display="reveal" id="homePanel" data-swipe-close="true">
 
         <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
-        <div class="panel" onclick="$.mobile.changePage('#homePage', { transition: 'slideup'} );">Home</div>
+        <div class="panel" onclick="$.mobile.changePage('#homePage', { transition: 'slide'} );">Home</div>
         <div class="panel" onclick="checkDrugPopup();">Check Drug</div>
-        <div class="panel" onclick="location.href='#drugRequests'">Drug Requests</div>
-        <div class="panel" onclick="location.href='#drugReports'">Drug Reports</div>
+        <div class="panel" onclick="$.mobile.changePage('#drugRequests', { transition: 'slide'} );">Drug Requests</div>
+        <div class="panel" onclick="$.mobile.changePage('#drugReports', { transition: 'slide'} );">Drug Reports</div>
         <div class="panel" onclick="signInPopup();">Sign In</div>
         <div class="panel">Sign Out</div>
 
     </div>
-    <div data-role="header" style="background-color: green; color: #FFFFFF;">
+    <div data-role="header" style="background-color: green; color: #FFFFFF;text-align: left;">
         <a href="#homePanel" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
-        <h3>Drug Reaction</h3>
+            <h3 style="text-align: left;">Drug Reaction</h3>
     </div>
 
     <div data-role="content">
@@ -146,11 +148,14 @@
 
             <script type="text/javascript">
                 $( document ).delegate("#homePage", "pageinit", function() {
-                    $.ajax({
+                        $.ajax({
                         dataType: "json",
                         url: "http://localhost/DrugreactSysWeb/Php/featuredDrug.php",
                         beforeSend: function () {
-                            $().ready(function(){spinner();});
+                            var interval = setInterval(function(){
+                                $.mobile.loading('show');
+                                clearInterval(interval);
+                            });
                         },
                         success: function(data){
                                 $.each(data, function(){
@@ -161,8 +166,10 @@
                             });
                         },
                         complete: function(){
-                            location.href = "#";
-
+                            var interval = setInterval(function(){
+                                $.mobile.loading('hide');
+                                clearInterval(interval);
+                            });
                         },
                         error: function () {
 
@@ -256,9 +263,23 @@
             var $this = $(this);
             event.preventDefault();
 
+            var interval = setInterval(function(){
+                $.mobile.loading('show');
+                clearInterval(interval);
+            });
+
             $.post($this.attr('action'), $this.serialize(), function(data){
-                location.href = "#";
-                alert(data);
+                var interval = setInterval(function(){
+                    $.mobile.loading('hide');
+                    clearInterval(interval);
+                });
+                if(data) {
+                    location.href = "#";
+                    alert(data);
+                }
+                else{
+                    alert("Network Error");
+                }
 
             });
             return false;
@@ -267,13 +288,13 @@
 </div>
 
 <div data-role="page" id="drugRequests" data-theme="b">
-    <div data-role="panel" data-position="left" data-display="reveal" id="requestPanel">
+    <div data-role="panel" data-position="left" data-display="reveal" id="requestPanel" data-swipe-close="true">
 
         <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
-        <div class="panel" data-transition="slide" onclick="location.href='#homePage'">Home</div>
+        <div class="panel" onclick="$.mobile.changePage('#homePage', { transition: 'slide'} );">Home</div>
         <div class="panel" onclick="checkDrugPopup();">Check Drug</div>
-        <div class="panel" data-transition="slide" onclick="location.href='#drugRequests'">Drug Requests</div>
-        <div class="panel" data-transition="slide" onclick="location.href='#drugReports'">Drug Reports</div>
+        <div class="panel" onclick="$.mobile.changePage('#drugRequests', { transition: 'slide'} );">Drug Requests</div>
+        <div class="panel" onclick="$.mobile.changePage('#drugReports', { transition: 'slide'} );">Drug Reports</div>
         <div class="panel" onclick="signInPopup();">Sign In</div>
         <div class="panel">Sign Out</div>
 
@@ -284,38 +305,49 @@
     </div>
 
     <div data-role="content">
-        <div><a href="#requestDrugPopup" data-rel="popup" data-transition="slideup" data-role="button" data-inline="true">Request Drug</a></div>
+        <div onclick="if(session_var != null){ $('#requestDrugPopup').popup('open');}else{signInPopup();}"><a href="" data-role="button" data-inline="true">Request Drug</a>
+
+        </div>
+        <div id="drugRequestInformer"></div>
         <div id="requestJSONDiv"></div>
         <script type="text/javascript">
-            $( document ).delegate("#drugRequests", "pageinit", function() {
-                $.ajax({
-                    dataType: "json",
-                    url: "http://localhost/DrugreactSysWeb/Php/drugRequestsJSON.php",
-                    beforeSend: function () {
-//                        $().ready(function(){spinner();});
-                        spinner();
-                    },
-                    success: function(data){
-                        $.each(data, function(){
-                            $('#requestJSONDiv').append($('<div style="padding-bottom: 10px">')
-                                    .append($('<div>').append(this.reqSickness))
-                                    .append($('<div>').append(this.reqSigns))
-                                    .append($('<div>').append(this.reqSymptoms))
-                                    .append($('<div>').append(this.sicknessPeriod))
-                                    .append($('<div>').append(this.date))
-                                    .append($('<div>').append(this.answer)));
+            if(session_var != null) {
+                $(document).delegate("#drugRequests", "pageinit", function () {
+                    $.ajax({
+                        dataType: "json",
+                        url: "http://localhost/DrugreactSysWeb/Php/drugRequestsJSON.php",
+                        beforeSend: function () {
+                            var interval = setInterval(function () {
+                                $.mobile.loading('show');
+                                clearInterval(interval);
+                            });
+                        },
+                        success: function (data) {
+                            $.each(data, function () {
+                                $('#requestJSONDiv').append($('<div style="padding-bottom: 10px">')
+                                        .append($('<div>').append(this.reqSickness))
+                                        .append($('<div>').append(this.reqSigns))
+                                        .append($('<div>').append(this.reqSymptoms))
+                                        .append($('<div>').append(this.sicknessPeriod))
+                                        .append($('<div>').append(this.date))
+                                        .append($('<div>').append(this.answer)));
+                            });
+                        },
+                        complete: function () {
+                            var interval = setInterval(function () {
+                                $.mobile.loading('hide');
+                                clearInterval(interval);
+                            });
+                        },
+                        error: function () {
 
-                        });
-                    },
-                    complete: function(){
-                        location.href = "#drugRequests";
-                    },
-                    error: function () {
-
-                    }
+                        }
+                    });
                 });
-
-            });
+            }
+            else{
+                drugRequestInformer.innerHTML = "Sign in to request a drug and view a history of your drug requests";
+            }
         </script>
     </div>
     <div data-role="footer">
@@ -361,13 +393,13 @@
 </div>
 
 <div data-role="page" id="drugReports" data-theme="b">
-    <div data-role="panel" data-position="left" data-display="reveal" id="reportPanel">
+    <div data-role="panel" data-position="left" data-display="reveal" id="reportPanel" data-swipe-close="true">
 
         <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
-        <div class="panel" data-transition="slide" onclick="location.href='#homePage'">Home</div>
+        <div class="panel" onclick="$.mobile.changePage('#homePage', { transition: 'slide'} );">Home</div>
         <div class="panel" onclick="checkDrugPopup();">Check Drug</div>
-        <div class="panel" data-transition="slide" onclick="location.href='#drugRequests'">Drug Requests</div>
-        <div class="panel" data-transition="slide" onclick="location.href='#drugReports'">Drug Reports</div>
+        <div class="panel" onclick="$.mobile.changePage('#drugRequests', { transition: 'slide'} );">Drug Requests</div>
+        <div class="panel" onclick="$.mobile.changePage('#drugReports', { transition: 'slide'} );">Drug Reports</div>
         <div class="panel" onclick="signInPopup();">Sign In</div>
         <div class="panel">Sign Out</div>
 
@@ -378,38 +410,50 @@
     </div>
 
     <div data-role="content">
-        <div><a href="#reportDrugPage" data-transition="slideup" data-role="button" data-inline="true">Report Drug</a></div>
+        <div onclick="if(session_var != null){$.mobile.changePage('#reportDrugPage', { transition: 'slide'} );}else{signInPopup();}"><a href="" data-role="button" data-inline="true">Request Drug</a>
+        <div id="drugReportInformer"></div>
         <div id="reportJSONDiv"></div>
         <script type="text/javascript">
-            $( document ).delegate("#drugReports", "pageinit", function() {
-                $.ajax({
-                    dataType: "json",
-                    url: "http://localhost/DrugreactSysWeb/Php/drugReportsJSON.php",
-                    beforeSend: function () {
-                        $().ready(function(){spinner();});
-                    },
-                    success: function(data){
-                        $.each(data, function(){
-                            $('#reportJSONDiv').append($('<div style="padding-bottom: 10px">')
-                                    .append($('<div>').append(this.repDrugName))
-                                    .append($('<div>').append(this.repSickness))
-                                    .append($('<div>').append(this.repDosage))
-                                    .append($('<div>').append(this.repSideSigns))
-                                    .append($('<div>').append(this.repSideSymptoms))
-                                    .append($('<div>').append(this.repMedPeriod))
-                                    .append($('<div>').append(this.date))
-                                    .append($('<div>').append(this.answer)));
-                        });
-                    },
-                    complete: function(){
-                        location.href = "#drugReports";
+            if(session_var != null) {
+                $(document).delegate("#drugReports", "pageinit", function () {
+                    $.ajax({
+                        dataType: "json",
+                        url: "http://localhost/DrugreactSysWeb/Php/drugReportsJSON.php",
+                        beforeSend: function () {
+                            var interval = setInterval(function () {
+                                $.mobile.loading('show');
+                                clearInterval(interval);
+                            });
+                        },
+                        success: function (data) {
+                            $.each(data, function () {
+                                $('#reportJSONDiv').append($('<div style="padding-bottom: 10px">')
+                                        .append($('<div>').append(this.repDrugName))
+                                        .append($('<div>').append(this.repSickness))
+                                        .append($('<div>').append(this.repDosage))
+                                        .append($('<div>').append(this.repSideSigns))
+                                        .append($('<div>').append(this.repSideSymptoms))
+                                        .append($('<div>').append(this.repMedPeriod))
+                                        .append($('<div>').append(this.date))
+                                        .append($('<div>').append(this.answer)));
+                            });
+                        },
+                        complete: function () {
+                            var interval = setInterval(function () {
+                                $.mobile.loading('hide');
+                                clearInterval(interval);
+                            });
 
-                    },
-                    error: function () {
+                        },
+                        error: function () {
 
-                    }
+                        }
+                    });
                 });
-            });
+            }
+            else{
+                drugReportInformer.innerHTML = "Sign in to report a drug and view a history of your drug reports";
+            }
         </script>
 
     </div>
