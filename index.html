@@ -42,11 +42,19 @@
                 });
             });
         }
+        function networkError(){
+            $.dynamic_popup({
+                content:
+                        '<div>Network Error</div>',
+                        'data-transition': 'none',
+                        'data-theme': 'b'
+            });
+        }
         function signInPopup() {
             $.dynamic_popup({
                 content:
                 '<div data-role="content" data-theme="b">'+
-                '<div style="padding-bottom: 15px;">Sign In</div>'+
+                '<div style="padding-bottom: 15px;">Sign In<div class="error" style="display:none">Invalid login</div></div>'+
                 '<form id="loginForm" action="http://localhost/DrugreactSysWeb/Php/login.php">'+
                 '<div id="usernameDiv" data-role="fieldcontain" style="padding-bottom: 20px;">'+
                 '<input type="email" id="loginEmail" name="loginEmail" style="height: 25px;" placeholder="Email" oninvalid="this.style.borderColor=#FF0000" required/>'+
@@ -85,47 +93,82 @@
             });
             $('#loginForm').submit(function(e) {
 
-                var $this = $(this);
                 e.preventDefault();
-                var interval = setInterval(function(){
-                    $.mobile.loading('show');
-                    clearInterval(interval);
-                });
-                $.post($this.attr('action'), $this.serialize(), function(data){
-                    var interval = setInterval(function(){
-                        $.mobile.loading('hide');
-                        clearInterval(interval);
-                    });
-                    if(data) {
-                        alert(data);
-                        session_var = true;
+                e.stopImmediatePropagation();
+
+                $.ajax({
+                    dataType: "text",
+                    url: "http://localhost/DrugreactSysWeb/Php/login.php",
+                    beforeSend: function () {
+                        var interval = setInterval(function(){
+                            $.mobile.loading('show');
+                            clearInterval(interval);
+                        });
+                    },
+                    success: function(data){
+                        if(data){
+                            $('.signIn').hide();
+                            $('.signOut').show();
+                            session_var = true;
+                                var currentPage = $.mobile.activePage.attr('id');
+
+                            $.mobile.changePage('#'+currentPage)
+                        }
+//                        else
+//                            $('.error').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
+                    },
+                    complete: function(){
+                        var interval = setInterval(function(){
+                            $.mobile.loading('hide');
+                            clearInterval(interval);
+                        });
+                    },
+                    error: function () {
+                        $(document).getElementsByClassName("error").innerHTML = "Network Error";
+                        $('.error').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
                     }
                 });
-                return false;
             });
         }
         function signUp(){
             $.mobile.changePage('#registerPage', {transition: 'flow'});
         }
+        function signOut(){
+            $.post($this.attr('action'), $this.serialize(), function(data){
+                var interval = setInterval(function(){
+                    $.mobile.loading('hide');
+                    clearInterval(interval);
+                });
+                if(!data) {
+                    $('.error').innerHTML = "Network Error";
+                    $('.error').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
+                    return false;
+                }
+                $('.signIn').show();
+                session_var = false;
+            });
+        }
     </script>
+
 </head>
 <body>
 
 <div data-role="page" id="homePage" data-theme="b">
     <div data-role="panel" data-position="left" data-display="reveal" id="homePanel" data-swipe-close="true">
 
-        <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
+        <div style="color: firebrick; font-weight: bolder;">Drug Reaction<span class="icon"></span></div>
         <div class="panel" onclick="$.mobile.changePage('#homePage', { transition: 'slide'} );">Home</div>
         <div class="panel" onclick="checkDrugPopup();">Check Drug</div>
         <div class="panel" onclick="$.mobile.changePage('#drugRequests', { transition: 'slide'} );">Drug Requests</div>
         <div class="panel" onclick="$.mobile.changePage('#drugReports', { transition: 'slide'} );">Drug Reports</div>
-        <div class="panel" onclick="signInPopup();">Sign In</div>
-        <div class="panel">Sign Out</div>
+        <div class="panel signIn" onclick="signInPopup();">Sign In</div>
+        <div class="panel" onclick="$.mobile.changePage('#registerPage', { transition: 'slide'} );">Sign Up</div>
+        <div class="panel signOut" onclick="signOut();">Sign Out</div>
 
     </div>
     <div data-role="header" style="background-color: green; color: #FFFFFF;text-align: left;">
-        <a href="#homePanel" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
-            <h3 style="text-align: left;">Drug Reaction</h3>
+        <a href="#homePanel" data-role="button" data-icon="grid" data-iconpos="notext">Drug Reaction</a>
+            <h3 style="text-align: left;">Home</h3>
     </div>
 
     <div data-role="content">
@@ -188,7 +231,7 @@
 <div data-role="page" id="registerPage" data-theme="b">
     <div data-role="panel" data-position="left" data-display="reveal" id="registerPanel">
 
-        <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
+        <div style="color: firebrick; font-weight: bolder;">Drug Reaction<span class="icon"></span></div>
         <div class="panel" data-transition="slide" onclick="location.href='#homePage'">Home</div>
         <div class="panel" onclick="checkDrugPopup();">Check Drug</div>
         <div class="panel" data-transition="slide" onclick="location.href='#drugRequests'">Drug Requests</div>
@@ -198,7 +241,7 @@
 
     </div>
     <div data-role="header" id="hdrReg">
-        <a href="#registerPanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
+        <a href="#registerPanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Drug Reaction</a>
         <h1>Drug Reaction</h1>
     </div>
         <div data-role="content">
@@ -274,6 +317,7 @@
                     clearInterval(interval);
                 });
                 if(data) {
+                    $('.signIn').hide();
                     location.href = "#";
                     alert(data);
                 }
@@ -290,7 +334,7 @@
 <div data-role="page" id="drugRequests" data-theme="b">
     <div data-role="panel" data-position="left" data-display="reveal" id="requestPanel" data-swipe-close="true">
 
-        <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
+        <div style="color: firebrick; font-weight: bolder;">Drug Reaction<span class="icon"></span></div>
         <div class="panel" onclick="$.mobile.changePage('#homePage', { transition: 'slide'} );">Home</div>
         <div class="panel" onclick="checkDrugPopup();">Check Drug</div>
         <div class="panel" onclick="$.mobile.changePage('#drugRequests', { transition: 'slide'} );">Drug Requests</div>
@@ -301,7 +345,7 @@
     </div>
     <div data-role="header" style="background-color: orange; color: #FFFFFF;">
         <h3>Drug Requests</h3>
-        <a href="#requestPanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
+        <a href="#requestPanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Drug Reaction</a>
     </div>
 
     <div data-role="content">
@@ -395,7 +439,7 @@
 <div data-role="page" id="drugReports" data-theme="b">
     <div data-role="panel" data-position="left" data-display="reveal" id="reportPanel" data-swipe-close="true">
 
-        <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
+        <div style="color: firebrick; font-weight: bolder;">Drug Reaction<span class="icon"></span></div>
         <div class="panel" onclick="$.mobile.changePage('#homePage', { transition: 'slide'} );">Home</div>
         <div class="panel" onclick="checkDrugPopup();">Check Drug</div>
         <div class="panel" onclick="$.mobile.changePage('#drugRequests', { transition: 'slide'} );">Drug Requests</div>
@@ -405,12 +449,12 @@
 
     </div>
     <div data-role="header" style="background-color: blueviolet; color: #FFFFFF;">
-        <a href="#reportPanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
+        <a href="#reportPanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Drug Reaction</a>
         <h3>Drug Reports</h3>
     </div>
 
     <div data-role="content">
-        <div onclick="if(session_var != null){$.mobile.changePage('#reportDrugPage', { transition: 'slide'} );}else{signInPopup();}"><a href="" data-role="button" data-inline="true">Request Drug</a>
+        <div onclick="if(session_var != null){$.mobile.changePage('#reportDrugPage', { transition: 'slide'} );}else{signInPopup();}"><a href="" data-role="button" data-inline="true">Report Drug</a>
         <div id="drugReportInformer"></div>
         <div id="reportJSONDiv"></div>
         <script type="text/javascript">
@@ -465,7 +509,7 @@
 <div data-role="page" id="reportDrugPage" data-theme="b">
     <div data-role="panel" data-position="left" data-display="reveal" id="reportDrugPanel">
 
-        <div style="color: firebrick; font-weight: bolder;">Menu<span class="icon"></span></div>
+        <div style="color: firebrick; font-weight: bolder;">Drug Reaction<span class="icon"></span></div>
         <div class="panel" data-transition="slide" onclick="location.href='#homePage'">Home</div>
         <div class="panel" onclick="checkDrugPopup();">Check Drug</div>
         <div class="panel" data-transition="slide" onclick="location.href='#drugRequests'">Drug Requests</div>
@@ -475,7 +519,7 @@
 
     </div>
         <div data-role="header">
-            <a href="#reportDrugPanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Menu</a>
+            <a href="#reportDrugPanel" class="showMenu" data-role="button" data-icon="grid" data-iconpos="notext">Drug Reaction</a>
             <h2>Report Drug</h2>
         </div>
         <div data-role="content">
@@ -520,6 +564,7 @@
     $('body').on('swipeleft', function () {
         $('#homePanel,#reportDrugPanel,#registerPanel,#requestPanel,#reportPanel').panel('close', '');
     });
+    $('.signOut').hide();
 </script>
 </body>
 </html>
