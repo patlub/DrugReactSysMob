@@ -54,7 +54,7 @@
             $.dynamic_popup({
                 content:
                 '<div data-role="content" data-theme="b">'+
-                '<div style="padding-bottom: 15px;">Sign In<div class="error" style="display:none">Invalid login</div></div>'+
+                '<div style="padding-bottom: 15px;">Sign In</div>'+
                 '<form id="loginForm" action="http://localhost/DrugreactSysWeb/Php/login.php">'+
                 '<div id="usernameDiv" data-role="fieldcontain" style="padding-bottom: 20px;">'+
                 '<input type="email" id="loginEmail" name="loginEmail" style="height: 25px;" placeholder="Email" oninvalid="this.style.borderColor=#FF0000" required/>'+
@@ -92,60 +92,76 @@
                 }
             });
             $('#loginForm').submit(function(e) {
-
+                var $this = $(this);
                 e.preventDefault();
-                e.stopImmediatePropagation();
-
-                $.ajax({
-                    dataType: "text",
-                    url: "http://localhost/DrugreactSysWeb/Php/login.php",
-                    beforeSend: function () {
-                        var interval = setInterval(function(){
-                            $.mobile.loading('show');
-                            clearInterval(interval);
-                        });
-                    },
-                    success: function(data){
-                        if(data){
-                            $('.signIn').hide();
-                            $('.signOut').show();
-                            session_var = true;
-                                var currentPage = $.mobile.activePage.attr('id');
-
-                            $.mobile.changePage('#'+currentPage)
-                        }
-//                        else
-//                            $('.error').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
-                    },
-                    complete: function(){
-                        var interval = setInterval(function(){
+                var interval = setInterval(function(){
+                    $.mobile.loading('show');
+                    clearInterval(interval);
+                });
+                $.post($this.attr('action'), $this.serialize())
+                        .done(
+                        function(data) {
+                            var interval = setInterval(function(){
                             $.mobile.loading('hide');
                             clearInterval(interval);
+                            });
+
+                            if(data) {
+                                $('.signIn').hide();
+                                $('.signUp').hide();
+                                var currentPage = $.mobile.activePage.attr('id');
+                                $.mobile.changePage('#'+currentPage);
+                            }
+                            else{
+                                $('.error').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
+                            }
+                        })
+                        .fail( function(XMLHttpRequest, textStatus, errorThrown) {
+                            var interval = setInterval(function(){
+                                $.mobile.loading('hide');
+                                clearInterval(interval);
+                            });
+                            $('.networkError').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
                         });
-                    },
-                    error: function () {
-                        $(document).getElementsByClassName("error").innerHTML = "Network Error";
-                        $('.error').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
-                    }
-                });
+                return false;
             });
         }
         function signUp(){
             $.mobile.changePage('#registerPage', {transition: 'flow'});
         }
         function signOut(){
-            $.post($this.attr('action'), $this.serialize(), function(data){
-                var interval = setInterval(function(){
-                    $.mobile.loading('hide');
-                    clearInterval(interval);
-                });
-                if(!data) {
-                    $('.error').innerHTML = "Network Error";
-                    $('.error').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
-                    return false;
+            $.ajax({
+                dataType: "text",
+                url: "http://localhost/DrugreactSysWeb/Php/logout.php",
+                beforeSend: function () {
+                    var interval = setInterval(function(){
+                        $.mobile.loading('show');
+                        clearInterval(interval);
+                    });
+                },
+                success: function(data){
+                    if(data){
+                        $('.signIn').show();
+                        $('.signOut').hide();
+                        session_var = false;
+                        $.mobile.changePage('#homePage');
+                    }
+//                        else
+//                            $('.error').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
+                },
+                complete: function(){
+                    var interval = setInterval(function(){
+                        $.mobile.loading('hide');
+                        clearInterval(interval);
+                    });
+                },
+                error: function () {
+                    var interval = setInterval(function(){
+                        $.mobile.loading('hide');
+                        clearInterval(interval);
+                    });
+//                    $('.networkError').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
                 }
-                $('.signIn').show();
-                session_var = false;
             });
         }
     </script>
@@ -162,7 +178,7 @@
         <div class="panel" onclick="$.mobile.changePage('#drugRequests', { transition: 'slide'} );">Drug Requests</div>
         <div class="panel" onclick="$.mobile.changePage('#drugReports', { transition: 'slide'} );">Drug Reports</div>
         <div class="panel signIn" onclick="signInPopup();">Sign In</div>
-        <div class="panel" onclick="$.mobile.changePage('#registerPage', { transition: 'slide'} );">Sign Up</div>
+        <div class="panel" onclick="signUp();">Sign Up</div>
         <div class="panel signOut" onclick="signOut();">Sign Out</div>
 
     </div>
@@ -172,6 +188,7 @@
     </div>
 
     <div data-role="content">
+
         <div align="center"><picture>
             <source src="sizedImages/maxresdefaultsmall.jpg">
             <source src="sizedImages/maxresdefaultmedium.jpg" media="(min-width:240px)">
@@ -188,7 +205,9 @@
         <div>
 
            <div id="featuredDrug" style="padding-top: 10px; padding-bottom: 5px; text-align: center; font-weight: bold;">Featured Drug</div>
-
+            <div id="featuredDrugJSONDiv"></div>
+            <div class="error" style="display:none">Invalid Login</div>
+            <div class="networkError" style="display:none">Network Error</div>
             <script type="text/javascript">
                 $( document ).delegate("#homePage", "pageinit", function() {
                         $.ajax({
@@ -201,11 +220,12 @@
                             });
                         },
                         success: function(data){
-                                $.each(data, function(){
-                                featuredDrugName.innerHTML = this.drugName;
-                                featuredDrugSickness.innerHTML = 'Treatment For: ' + this.sickness;
-                                featuredDrugDosage.innerHTML = 'Dosage: ' + this.dosage;
-                                featuredDrugEffects.innerHTML = 'Known Side Effects: ' + this.sideSigns + ', ' + this.sideSymptoms;
+                            $.each(data, function () {
+                                $('#featuredDrugJSONDiv').append($('<div style="padding-bottom: 10px">')
+                                        .append($('<div id="featuredDrugName">').append(this.drugName))
+                                        .append($('<div id="featuredDrugSickness">').append('Treatment For: ' + this.sickness))
+                                        .append($('<div id="featuredDrugDosage">').append('Dosage: ' + this.dosage))
+                                        .append($('<div id="featuredDrugEffects">').append('Known Side Effects: '+ this.sideSigns + ', ' + this.sideSymptoms)));
                             });
                         },
                         complete: function(){
@@ -215,15 +235,12 @@
                             });
                         },
                         error: function () {
-
+                            $('.networkError').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
                         }
                     });
                 });
             </script>
-            <div id="featuredDrugName" style=""></div>
-            <div id="featuredDrugSickness" style=""></div>
-            <div id="featuredDrugDosage" style=""></div>
-            <div id="featuredDrugEffects" style=""></div>
+
         </div>
     </div>
 </div>
@@ -245,6 +262,8 @@
         <h1>Drug Reaction</h1>
     </div>
         <div data-role="content">
+            <div class="error" style="display:none">Invalid Login</div>
+            <div class="networkError" style="display:none">Network Error</div>
         <form id="registrationForm" action="http://localhost/DrugreactSysWeb/Php/register.php">
             <div id="firstnameDiv" data-role="fieldcontain">
                 <input type="text" id="firstName" name="firstname" placeholder="First Name" required />
@@ -302,32 +321,35 @@
 //                }
 //            });
 //        });
-        $('#registrationForm').submit(function(event) {
-            var $this = $(this);
-            event.preventDefault();
-
-            var interval = setInterval(function(){
-                $.mobile.loading('show');
-                clearInterval(interval);
-            });
-
-            $.post($this.attr('action'), $this.serialize(), function(data){
-                var interval = setInterval(function(){
-                    $.mobile.loading('hide');
-                    clearInterval(interval);
-                });
-                if(data) {
-                    $('.signIn').hide();
-                    location.href = "#";
-                    alert(data);
-                }
-                else{
-                    alert("Network Error");
-                }
-
-            });
-            return false;
+    $('#registrationForm').submit(function(e) {
+        var $this = $(this);
+        e.preventDefault();
+        var interval = setInterval(function(){
+            $.mobile.loading('show');
+            clearInterval(interval);
         });
+        $.post($this.attr('action'), $this.serialize())
+                .done(
+                function(data) {
+                    var interval = setInterval(function(){
+                        $.mobile.loading('hide');
+                        clearInterval(interval);
+                    });
+                    if(data) {
+                        $('.signIn').hide();
+                        $('.signUp').hide();
+                        $.mobile.changePage('#homePage');
+                    }
+                })
+                .fail( function(XMLHttpRequest, textStatus, errorThrown) {
+                    var interval = setInterval(function(){
+                        $.mobile.loading('hide');
+                        clearInterval(interval);
+                    });
+                    $('.networkError').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
+                });
+        return false;
+    });
     </script>
 </div>
 
@@ -349,13 +371,15 @@
     </div>
 
     <div data-role="content">
+        <div class="error" style="display:none">Invalid Login</div>
+        <div class="networkError" style="display:none">Network Error</div>
         <div onclick="if(session_var != null){ $('#requestDrugPopup').popup('open');}else{signInPopup();}"><a href="" data-role="button" data-inline="true">Request Drug</a>
 
         </div>
         <div id="drugRequestInformer"></div>
         <div id="requestJSONDiv"></div>
         <script type="text/javascript">
-            if(session_var != null) {
+//            if(session_var == true) {
                 $(document).delegate("#drugRequests", "pageinit", function () {
                     $.ajax({
                         dataType: "json",
@@ -388,10 +412,10 @@
                         }
                     });
                 });
-            }
-            else{
-                drugRequestInformer.innerHTML = "Sign in to request a drug and view a history of your drug requests";
-            }
+//            }
+//            else{
+//                drugRequestInformer.innerHTML = "Sign in to request a drug and view a history of your drug requests";
+//            }
         </script>
     </div>
     <div data-role="footer">
@@ -454,6 +478,8 @@
     </div>
 
     <div data-role="content">
+        <div class="error" style="display:none">Invalid Login</div>
+        <div class="networkError" style="display:none">Network Error</div>
         <div onclick="if(session_var != null){$.mobile.changePage('#reportDrugPage', { transition: 'slide'} );}else{signInPopup();}"><a href="" data-role="button" data-inline="true">Report Drug</a>
         <div id="drugReportInformer"></div>
         <div id="reportJSONDiv"></div>
@@ -523,6 +549,8 @@
             <h2>Report Drug</h2>
         </div>
         <div data-role="content">
+            <div class="error" style="display:none">Invalid Login</div>
+            <div class="networkError" style="display:none">Network Error</div>
             <form id="reportDrugForm" action="http://localhost/DrugreactSysWeb/Php/report.php">
             <input type="text" id="enterDrugName" name="enterDrugName" placeholder="Enter Drug Name" required/>
             <input type="text" id="reportSickness" name="reportEnterSickness" placeholder="Enter Sickness" required/>
