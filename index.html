@@ -27,9 +27,12 @@
 
         function checkDrugPopup() {
             $.dynamic_popup({
-                content: '<form>' +
-                '<div><label for="selectDrug">Select Drug</label></div>' +
-                '<div style="padding-bottom: 10px;"><select id="selectDrug" name="selectDrug"  style="width: 120px; height: 25px;"><option>Select Drug</option></select></div>' +
+                content:
+                '<form id="selectDrugForm" action="http://localhost/DrugreactSysWeb/Php/checkDrug.php">' +
+                '<div>' +
+                '<label for="selectDrug">Select Drug</label></div>' +
+                '<div style="padding-bottom: 10px;">' +
+                '<select id="selectDrug" name="selectDrug"  style="width: 120px; height: 25px;"><option>Select Drug</option></select></div>' +
                 '<div><input type="submit" value="check" id="checkDrugButton" style="width: 60px; height: 30px;" data-inline="true"/></div>' +
                 '</form>',
                 'data-transition': 'slideup',
@@ -41,13 +44,39 @@
                     select.append($("<option />").val(this.drugName).text(this.drugName));
                 });
             });
-        }
-        function networkError(){
-            $.dynamic_popup({
-                content:
-                        '<div>Network Error</div>',
-                        'data-transition': 'none',
-                        'data-theme': 'b'
+            $('#selectDrugForm').submit(function(e) {
+                var $this = $(this);
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                var interval = setInterval(function(){
+                    $.mobile.loading('show');
+                    clearInterval(interval);
+                });
+                $.post($this.attr('action'), $this.serialize())
+                        .done(
+                        function(data) {
+                            var interval = setInterval(function(){
+                                $.mobile.loading('hide');
+                                clearInterval(interval);
+                            });
+                            $.mobile.changePage('#homePage', { transition: 'slide'} );
+                            featuredDrug.innerHTML = 'Drug Results';
+
+                            var rst = JSON.parse(data);
+
+                                featuredDrugName.innerHTML = rst[0].drugName;
+                                featuredDrugSickness.innerHTML = 'Treatment For: ' + rst[0].sickness;
+                                featuredDrugDosage.innerHTML = 'Dosage: ' + rst[0].dosage;
+                                featuredDrugEffects.innerHTML = 'Known Side Effects: '+ rst[0].sideSigns + ', ' + rst[0].sideSymptoms;
+                        })
+                        .fail( function(XMLHttpRequest, textStatus, errorThrown) {
+                            var interval = setInterval(function(){
+                                $.mobile.loading('hide');
+                                clearInterval(interval);
+                            });
+                            $('.networkError').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
+                        });
+                return false;
             });
         }
         function signInPopup() {
@@ -81,13 +110,7 @@
                         email: true
                     },
                     password:{
-                        required: true,
-                        minlength: 5
-                    }
-                },
-                messages:{
-                    password:{
-                        minlength: "Minimum length must be 5"
+                        required: true
                     }
                 }
             });
@@ -109,8 +132,18 @@
                             if(data) {
                                 $('.signIn').hide();
                                 $('.signUp').hide();
+                                $('.signOut').show();
+
+                                session_var = true;
+                                $('.signInDivs').hide();
+
                                 var currentPage = $.mobile.activePage.attr('id');
-                                $.mobile.changePage('#'+currentPage);
+                                if(currentPage == 'drugReports') {
+                                    drugReportJson();
+                                }
+                                else if(currentPage == 'drugRequests'){
+                                    drugRequestJson();
+                                }
                             }
                             else{
                                 $('.error').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
@@ -143,6 +176,7 @@
                     if(data){
                         $('.signIn').show();
                         $('.signOut').hide();
+                        $('.signUp').show();
                         session_var = false;
                         $.mobile.changePage('#homePage');
                     }
@@ -164,6 +198,77 @@
                 }
             });
         }
+        function drugReportJson(){
+                $.ajax({
+                    dataType: "json",
+                    url: "http://localhost/DrugreactSysWeb/Php/drugReportsJSON.php",
+                    beforeSend: function () {
+                        var interval = setInterval(function () {
+                            $.mobile.loading('show');
+                            clearInterval(interval);
+                        });
+                    },
+                    success: function (data) {
+                        $.each(data, function () {
+                            $('#reportJSONDiv').append($('<div style="padding-bottom: 10px">')
+                                    .append($('<div>').append(this.repDrugName))
+                                    .append($('<div>').append(this.repSickness))
+                                    .append($('<div>').append(this.repDosage))
+                                    .append($('<div>').append(this.repSideSigns))
+                                    .append($('<div>').append(this.repSideSymptoms))
+                                    .append($('<div>').append(this.repMedPeriod))
+                                    .append($('<div>').append(this.date))
+                                    .append($('<div>').append(this.answer)));
+                        });
+                    },
+                    complete: function () {
+                        var interval = setInterval(function () {
+                            $.mobile.loading('hide');
+                            clearInterval(interval);
+                        });
+
+                    },
+                    error: function () {
+
+                    }
+                });
+        }
+        function drugRequestJson(){
+            $.ajax({
+                dataType: "json",
+                url: "http://localhost/DrugreactSysWeb/Php/drugRequestsJSON.php",
+                beforeSend: function () {
+                    var interval = setInterval(function () {
+                        $.mobile.loading('show');
+                        clearInterval(interval);
+                    });
+                },
+                success: function (data) {
+                    $.each(data, function () {
+                        $('#requestJSONDiv').append($('<div style="padding-bottom: 10px">')
+                                .append($('<div>').append(this.reqSickness))
+                                .append($('<div>').append(this.reqSigns))
+                                .append($('<div>').append(this.reqSymptoms))
+                                .append($('<div>').append(this.sicknessPeriod))
+                                .append($('<div>').append(this.date))
+                                .append($('<div>').append(this.answer)));
+                    });
+                },
+                complete: function () {
+                    var interval = setInterval(function () {
+                        $.mobile.loading('hide');
+                        clearInterval(interval);
+                    });
+                },
+                error: function () {
+                    var interval = setInterval(function () {
+                        $.mobile.loading('hide');
+                        clearInterval(interval);
+                    });
+                    $('.networkError').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
+                }
+            });
+        }
     </script>
 
 </head>
@@ -178,13 +283,13 @@
         <div class="panel" onclick="$.mobile.changePage('#drugRequests', { transition: 'slide'} );">Drug Requests</div>
         <div class="panel" onclick="$.mobile.changePage('#drugReports', { transition: 'slide'} );">Drug Reports</div>
         <div class="panel signIn" onclick="signInPopup();">Sign In</div>
-        <div class="panel" onclick="signUp();">Sign Up</div>
+        <div class="panel signUp" onclick="signUp();">Sign Up</div>
         <div class="panel signOut" onclick="signOut();">Sign Out</div>
 
     </div>
-    <div data-role="header" style="background-color: green; color: #FFFFFF;text-align: left;">
+    <div data-role="header" style="background-color: green; color: #FFFFFF;">
         <a href="#homePanel" data-role="button" data-icon="grid" data-iconpos="notext">Drug Reaction</a>
-            <h3 style="text-align: left;">Home</h3>
+            <h3 style="">Home</h3>
     </div>
 
     <div data-role="content">
@@ -205,6 +310,7 @@
         <div>
 
            <div id="featuredDrug" style="padding-top: 10px; padding-bottom: 5px; text-align: center; font-weight: bold;">Featured Drug</div>
+            <div id="selectDrugResult"></div>
             <div id="featuredDrugJSONDiv"></div>
             <div class="error" style="display:none">Invalid Login</div>
             <div class="networkError" style="display:none">Network Error</div>
@@ -249,12 +355,13 @@
     <div data-role="panel" data-position="left" data-display="reveal" id="registerPanel">
 
         <div style="color: firebrick; font-weight: bolder;">Drug Reaction<span class="icon"></span></div>
-        <div class="panel" data-transition="slide" onclick="location.href='#homePage'">Home</div>
+        <div class="panel" onclick="$.mobile.changePage('#homePage', { transition: 'slide'} );">Home</div>
         <div class="panel" onclick="checkDrugPopup();">Check Drug</div>
-        <div class="panel" data-transition="slide" onclick="location.href='#drugRequests'">Drug Requests</div>
-        <div class="panel" data-transition="slide" onclick="location.href='#drugReports'">Drug Reports</div>
-        <div class="panel" onclick="signInPopup();">Sign In</div>
-        <div class="panel">Sign Out</div>
+        <div class="panel" onclick="$.mobile.changePage('#drugRequests', { transition: 'slide'} );">Drug Requests</div>
+        <div class="panel" onclick="$.mobile.changePage('#drugReports', { transition: 'slide'} );">Drug Reports</div>
+        <div class="panel signIn" onclick="signInPopup();">Sign In</div>
+        <div class="panel signUp" onclick="signUp();">Sign Up</div>
+        <div class="panel signOut" onclick="signOut();">Sign Out</div>
 
     </div>
     <div data-role="header" id="hdrReg">
@@ -338,6 +445,7 @@
                     if(data) {
                         $('.signIn').hide();
                         $('.signUp').hide();
+                        session_var = true;
                         $.mobile.changePage('#homePage');
                     }
                 })
@@ -361,8 +469,9 @@
         <div class="panel" onclick="checkDrugPopup();">Check Drug</div>
         <div class="panel" onclick="$.mobile.changePage('#drugRequests', { transition: 'slide'} );">Drug Requests</div>
         <div class="panel" onclick="$.mobile.changePage('#drugReports', { transition: 'slide'} );">Drug Reports</div>
-        <div class="panel" onclick="signInPopup();">Sign In</div>
-        <div class="panel">Sign Out</div>
+        <div class="panel signIn" onclick="signInPopup();">Sign In</div>
+        <div class="panel signUp" onclick="signUp();">Sign Up</div>
+        <div class="panel signOut" onclick="signOut();">Sign Out</div>
 
     </div>
     <div data-role="header" style="background-color: orange; color: #FFFFFF;">
@@ -373,49 +482,21 @@
     <div data-role="content">
         <div class="error" style="display:none">Invalid Login</div>
         <div class="networkError" style="display:none">Network Error</div>
-        <div onclick="if(session_var != null){ $('#requestDrugPopup').popup('open');}else{signInPopup();}"><a href="" data-role="button" data-inline="true">Request Drug</a>
+        <div onclick="if(session_var){ $('#requestDrugPopup').popup('open');}else{signInPopup();}"><a href="" data-role="button" data-inline="true">Request Drug</a>
 
         </div>
-        <div id="drugRequestInformer"></div>
+        <div class="signInDivs" id="drugRequestInformer"></div>
         <div id="requestJSONDiv"></div>
         <script type="text/javascript">
-//            if(session_var == true) {
                 $(document).delegate("#drugRequests", "pageinit", function () {
-                    $.ajax({
-                        dataType: "json",
-                        url: "http://localhost/DrugreactSysWeb/Php/drugRequestsJSON.php",
-                        beforeSend: function () {
-                            var interval = setInterval(function () {
-                                $.mobile.loading('show');
-                                clearInterval(interval);
-                            });
-                        },
-                        success: function (data) {
-                            $.each(data, function () {
-                                $('#requestJSONDiv').append($('<div style="padding-bottom: 10px">')
-                                        .append($('<div>').append(this.reqSickness))
-                                        .append($('<div>').append(this.reqSigns))
-                                        .append($('<div>').append(this.reqSymptoms))
-                                        .append($('<div>').append(this.sicknessPeriod))
-                                        .append($('<div>').append(this.date))
-                                        .append($('<div>').append(this.answer)));
-                            });
-                        },
-                        complete: function () {
-                            var interval = setInterval(function () {
-                                $.mobile.loading('hide');
-                                clearInterval(interval);
-                            });
-                        },
-                        error: function () {
-
-                        }
-                    });
+                    if(!session_var){
+                        drugRequestInformer.innerHTML = "Sign in to report a drug and view a history of your drug reports";
+                    }
+                    else {
+                        drugRequestJson();
+                    }
                 });
-//            }
-//            else{
-//                drugRequestInformer.innerHTML = "Sign in to request a drug and view a history of your drug requests";
-//            }
+
         </script>
     </div>
     <div data-role="footer">
@@ -448,15 +529,35 @@
 //                }
 //            });
 //        });
-        $('#requestDrugForm').submit(function(event){
-            var $this = $(this);
-            event.preventDefault();
-
-            $.post($this.attr('action'),$this.serialize(),function(data){
-                document.write(data);
+$('#requestDrugForm').submit(function(e) {
+    var $this = $(this);
+    e.preventDefault();
+    var interval = setInterval(function(){
+        $.mobile.loading('show');
+        clearInterval(interval);
+    });
+    $.post($this.attr('action'), $this.serialize())
+            .done(
+            function(data) {
+                var interval = setInterval(function(){
+                    $.mobile.loading('hide');
+                    clearInterval(interval);
+                    alert(data);
+                });
+                if(data) {
+                    var currentPage = $.mobile.activePage.attr('id');
+                    $.mobile.changePage('#drugRequests');
+                }
+            })
+            .fail( function(XMLHttpRequest, textStatus, errorThrown) {
+                var interval = setInterval(function(){
+                    $.mobile.loading('hide');
+                    clearInterval(interval);
+                });
+                $('.networkError').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
             });
-            return false;
-        });
+    return false;
+});
     </script>
 </div>
 
@@ -468,8 +569,9 @@
         <div class="panel" onclick="checkDrugPopup();">Check Drug</div>
         <div class="panel" onclick="$.mobile.changePage('#drugRequests', { transition: 'slide'} );">Drug Requests</div>
         <div class="panel" onclick="$.mobile.changePage('#drugReports', { transition: 'slide'} );">Drug Reports</div>
-        <div class="panel" onclick="signInPopup();">Sign In</div>
-        <div class="panel">Sign Out</div>
+        <div class="panel signIn" onclick="signInPopup();">Sign In</div>
+        <div class="panel signUp" onclick="signUp();">Sign Up</div>
+        <div class="panel signOut" onclick="signOut();">Sign Out</div>
 
     </div>
     <div data-role="header" style="background-color: blueviolet; color: #FFFFFF;">
@@ -480,50 +582,18 @@
     <div data-role="content">
         <div class="error" style="display:none">Invalid Login</div>
         <div class="networkError" style="display:none">Network Error</div>
-        <div onclick="if(session_var != null){$.mobile.changePage('#reportDrugPage', { transition: 'slide'} );}else{signInPopup();}"><a href="" data-role="button" data-inline="true">Report Drug</a>
-        <div id="drugReportInformer"></div>
+        <div onclick="if(session_var){$.mobile.changePage('#reportDrugPage', { transition: 'slide'});}else{signInPopup();}"><a href="#" data-role="button" data-inline="true">Report Drug</a></div>
+        <div class="signInDivs" id="drugReportInformer"></div>
         <div id="reportJSONDiv"></div>
         <script type="text/javascript">
-            if(session_var != null) {
                 $(document).delegate("#drugReports", "pageinit", function () {
-                    $.ajax({
-                        dataType: "json",
-                        url: "http://localhost/DrugreactSysWeb/Php/drugReportsJSON.php",
-                        beforeSend: function () {
-                            var interval = setInterval(function () {
-                                $.mobile.loading('show');
-                                clearInterval(interval);
-                            });
-                        },
-                        success: function (data) {
-                            $.each(data, function () {
-                                $('#reportJSONDiv').append($('<div style="padding-bottom: 10px">')
-                                        .append($('<div>').append(this.repDrugName))
-                                        .append($('<div>').append(this.repSickness))
-                                        .append($('<div>').append(this.repDosage))
-                                        .append($('<div>').append(this.repSideSigns))
-                                        .append($('<div>').append(this.repSideSymptoms))
-                                        .append($('<div>').append(this.repMedPeriod))
-                                        .append($('<div>').append(this.date))
-                                        .append($('<div>').append(this.answer)));
-                            });
-                        },
-                        complete: function () {
-                            var interval = setInterval(function () {
-                                $.mobile.loading('hide');
-                                clearInterval(interval);
-                            });
-
-                        },
-                        error: function () {
-
-                        }
-                    });
+                    if (!session_var) {
+                        drugReportInformer.innerHTML = "Sign in to report a drug and view a history of your drug reports";
+                    }
+                    else {
+                        drugReportJson();
+                    }
                 });
-            }
-            else{
-                drugReportInformer.innerHTML = "Sign in to report a drug and view a history of your drug reports";
-            }
         </script>
 
     </div>
@@ -536,12 +606,13 @@
     <div data-role="panel" data-position="left" data-display="reveal" id="reportDrugPanel">
 
         <div style="color: firebrick; font-weight: bolder;">Drug Reaction<span class="icon"></span></div>
-        <div class="panel" data-transition="slide" onclick="location.href='#homePage'">Home</div>
+        <div class="panel" onclick="$.mobile.changePage('#homePage', { transition: 'slide'} );">Home</div>
         <div class="panel" onclick="checkDrugPopup();">Check Drug</div>
-        <div class="panel" data-transition="slide" onclick="location.href='#drugRequests'">Drug Requests</div>
-        <div class="panel" data-transition="slide" onclick="location.href='#drugReports'">Drug Reports</div>
-        <div class="panel" onclick="signInPopup();">Sign In</div>
-        <div class="panel">Sign Out</div>
+        <div class="panel" onclick="$.mobile.changePage('#drugRequests', { transition: 'slide'} );">Drug Requests</div>
+        <div class="panel" onclick="$.mobile.changePage('#drugReports', { transition: 'slide'} );">Drug Reports</div>
+        <div class="panel signIn" onclick="signInPopup();">Sign In</div>
+        <div class="panel signUp" onclick="signUp();">Sign Up</div>
+        <div class="panel signOut" onclick="signOut();">Sign Out</div>
 
     </div>
         <div data-role="header">
@@ -574,14 +645,34 @@
 //                }
 //            });
 //        });
-        $('#reportDrugForm').submit(function(event){
-            var $this =$(this);
-            event.preventDefault();
-            $.post($this.attr('action'),$this.serialize(),function(data){
-                document.write(data);
+$('#reportDrugForm').submit(function(e) {
+    var $this = $(this);
+    e.preventDefault();
+    var interval = setInterval(function(){
+        $.mobile.loading('show');
+        clearInterval(interval);
+    });
+    $.post($this.attr('action'), $this.serialize())
+            .done(
+            function(data) {
+                var interval = setInterval(function(){
+                    $.mobile.loading('hide');
+                    clearInterval(interval);
+                });
+                if(data) {
+                    var currentPage = $.mobile.activePage.attr('id');
+                    $.mobile.changePage('#drugReports');
+                }
+            })
+            .fail( function(XMLHttpRequest, textStatus, errorThrown) {
+                var interval = setInterval(function(){
+                    $.mobile.loading('hide');
+                    clearInterval(interval);
+                });
+                $('.networkError').fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
             });
-            return false;
-        });
+    return false;
+});
     </script>
 </div>
 <script type="text/javascript">
